@@ -149,7 +149,30 @@ class WhatsAppVerificationService
             }
         }
 
-        if ($isConfirmed) {
+        if ($isCancelled) {
+            $order->update([
+                'order_status' => 'cancelled',
+                'verification_status' => 'rejected',
+                'admin_notes' => ($order->admin_notes ? $order->admin_notes . "\n" : '') . '✗ Cancelled by customer via WhatsApp',
+            ]);
+
+            // Restore product stock
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->increment('stock_quantity', $item->quantity);
+                }
+            }
+
+            $cancelReply = "আপনার অনুরোধ অনুযায়ী অর্ডারটি বাতিল করা হয়েছে। ভবিষ্যতে আবারও আমাদের সাথে কেনাকাটা করার আমন্ত্রণ রইল। ভালো থাকবেন!";
+            self::sendCloudMessage($phone, $cancelReply);
+
+            return [
+                'success' => true,
+                'action' => 'cancelled',
+                'order_id' => $order->id,
+                'reply' => $cancelReply,
+            ];
+        } elseif ($isConfirmed) {
             // 1. Mark verified & processing
             $trackingId = 'ST-' . rand(100000, 999999);
             $order->update([
@@ -173,29 +196,6 @@ class WhatsAppVerificationService
                 'order_number' => $order->order_number,
                 'tracking_code' => $trackingId,
                 'reply' => $replyMsg,
-            ];
-        } elseif ($isCancelled) {
-            $order->update([
-                'order_status' => 'cancelled',
-                'verification_status' => 'rejected',
-                'admin_notes' => ($order->admin_notes ? $order->admin_notes . "\n" : '') . '✗ Cancelled by customer via WhatsApp',
-            ]);
-
-            // Restore product stock
-            foreach ($order->items as $item) {
-                if ($item->product) {
-                    $item->product->increment('stock_quantity', $item->quantity);
-                }
-            }
-
-            $cancelReply = "আপনার অনুরোধ অনুযায়ী অর্ডারটি বাতিল করা হয়েছে। ভবিষ্যতে আবারও আমাদের সাথে কেনাকাটা করার আমন্ত্রণ রইল। ভালো থাকবেন!";
-            self::sendCloudMessage($phone, $cancelReply);
-
-            return [
-                'success' => true,
-                'action' => 'cancelled',
-                'order_id' => $order->id,
-                'reply' => $cancelReply,
             ];
         } else {
             $clarifyReply = "অর্ডারটি নিশ্চিত করতে অনুগ্রহ করে *'হ্যাঁ'* অথবা বাতিল করতে *'না'* লিখে পাঠান।";
