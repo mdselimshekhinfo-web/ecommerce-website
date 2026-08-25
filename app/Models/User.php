@@ -18,6 +18,8 @@ class User extends Authenticatable
         'address',
         'district',
         'role',
+        'status',
+        'permissions',
         'is_admin',
         'avatar',
     ];
@@ -33,6 +35,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'permissions' => 'array',
         ];
     }
 
@@ -64,5 +67,25 @@ class User extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isActive(): bool
+    {
+        return ($this->status ?? 'active') === 'active';
+    }
+
+    public function isBlocked(): bool
+    {
+        return ($this->status ?? 'active') === 'blocked';
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        $perms = $this->permissions ?? [];
+        return in_array($permission, $perms) || in_array('*', $perms);
     }
 }

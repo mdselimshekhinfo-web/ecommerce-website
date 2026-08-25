@@ -108,24 +108,40 @@
         </div>
 
         <!-- Right: Products Catalog Grid -->
-        <div class="lg:col-span-3 space-y-6">
+        <div class="lg:col-span-3 space-y-6" x-data="{ viewMode: 'grid' }">
             
-            <!-- Top Controls (Count & Sort) -->
+            <!-- Top Controls (Count, View Switcher & Sort) -->
             <div class="glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p class="text-xs text-slate-400 font-mono">
                     Showing <span class="text-cyan-400 font-bold">{{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }}</span> of <span class="text-white font-bold">{{ $products->total() }}</span> Cyber Products
                 </p>
 
-                <div class="flex items-center space-x-2 text-xs">
-                    <span class="text-slate-400">Sort by:</span>
-                    <select name="sort" onchange="document.getElementById('filterForm').elements['sort'].value = this.value; document.getElementById('filterForm').submit()" 
-                            class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
-                        <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Newest Arrival</option>
-                        <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Most Popular</option>
-                        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
-                        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
-                        <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Highest Rating</option>
-                    </select>
+                <div class="flex items-center space-x-3 text-xs">
+                    <!-- Grid / List Switcher -->
+                    <div class="flex items-center p-1 rounded-xl bg-slate-900 border border-slate-700 space-x-1">
+                        <button type="button" @click="viewMode = 'grid'" 
+                                :class="viewMode === 'grid' ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' : 'text-slate-400 hover:text-white'"
+                                class="p-1.5 rounded-lg border border-transparent transition-all" title="গ্রিড ভিউ (Grid View)">
+                            <i data-lucide="grid" class="w-4 h-4"></i>
+                        </button>
+                        <button type="button" @click="viewMode = 'list'" 
+                                :class="viewMode === 'list' ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' : 'text-slate-400 hover:text-white'"
+                                class="p-1.5 rounded-lg border border-transparent transition-all" title="লিস্ট ভিউ (List View)">
+                            <i data-lucide="list" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <span class="text-slate-400">Sort by:</span>
+                        <select name="sort" onchange="document.getElementById('filterForm').elements['sort'].value = this.value; document.getElementById('filterForm').submit()" 
+                                class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Newest Arrival</option>
+                            <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Most Popular</option>
+                            <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
+                            <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Price: High to Low</option>
+                            <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Highest Rating</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -142,7 +158,7 @@
                     </a>
                 </div>
             @else
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div :class="viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'">
                     @foreach($products as $product)
                         <div class="glass-card rounded-2xl p-4 flex flex-col justify-between relative group" x-data="{ adding: false, added: false, wishlisted: false }">
                             

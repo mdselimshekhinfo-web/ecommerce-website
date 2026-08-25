@@ -173,7 +173,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Customer CRM & VIP
     Route::get('/customers', [AdminCustomerController::class, 'index'])->name('customers.index');
+    Route::post('/customers', [AdminCustomerController::class, 'store'])->name('customers.store');
     Route::get('/customers/{id}', [AdminCustomerController::class, 'show'])->name('customers.show');
+    Route::put('/customers/{id}', [AdminCustomerController::class, 'update'])->name('customers.update');
+    Route::post('/customers/{id}/toggle-status', [AdminCustomerController::class, 'toggleStatus'])->name('customers.toggle_status');
 
     // Product Management
     Route::resource('products', AdminProductController::class)->except(['show']);

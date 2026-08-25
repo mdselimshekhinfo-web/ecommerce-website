@@ -189,6 +189,17 @@
                 </div>
             </form>
 
+            <!-- Stock Urgency Alert (if <= 5 left) -->
+            @if($product->stock_quantity > 0 && $product->stock_quantity <= 5)
+                <div class="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/40 flex items-center justify-between text-xs font-mono text-amber-300 animate-pulse">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+                        <span class="font-bold">🔥 সীমিত স্টক: আর মাত্র {{ $product->stock_quantity }}টি পণ্য বাকি আছে!</span>
+                    </div>
+                    <span class="text-[10px] text-amber-400/80 uppercase font-bold">Fast Selling</span>
+                </div>
+            @endif
+
             <!-- Bangladesh Delivery Charge Calculator -->
             <div class="glass-card rounded-2xl p-4 space-y-3 mt-6 border border-slate-800" x-data="deliveryCalculator()">
                 <div class="flex items-center justify-between">
@@ -215,8 +226,30 @@
                 </div>
             </div>
 
+            <!-- Social Share Buttons -->
+            <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <span class="text-xs font-cyber font-bold text-slate-400 uppercase tracking-wider">শেয়ার করুন:</span>
+                <div class="flex items-center space-x-2">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" 
+                       class="px-3 py-1.5 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-all text-xs font-bold flex items-center space-x-1.5" title="Facebook-এ শেয়ার করুন">
+                        <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://api.whatsapp.com/send?text={{ urlencode($product->name . ' - ' . url()->current()) }}" target="_blank"
+                       class="px-3 py-1.5 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold flex items-center space-x-1.5" title="WhatsApp-এ পাঠান">
+                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                        <span>WhatsApp</span>
+                    </a>
+                    <button type="button" @click="navigator.clipboard.writeText(window.location.href); alert('লিঙ্কটি সফলভাবে কপি করা হয়েছে!')"
+                            class="px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 border border-slate-700 hover:border-cyan-400 hover:text-cyan-300 transition-all text-xs font-mono flex items-center space-x-1.5" title="Copy Link">
+                        <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                        <span>কপি লিঙ্ক</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Trust Badges -->
-            <div class="grid grid-cols-3 gap-3 pt-4 text-center text-[10px] font-mono text-slate-400">
+            <div class="grid grid-cols-3 gap-3 pt-2 text-center text-[10px] font-mono text-slate-400">
                 <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
                     <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400 mx-auto mb-1"></i>
                     <span>100% Genuine</span>

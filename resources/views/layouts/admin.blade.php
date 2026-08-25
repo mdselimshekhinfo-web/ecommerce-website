@@ -295,6 +295,25 @@
 
             <div class="flex items-center space-x-3">
                 
+                <!-- Low Stock Bell Alert Badge -->
+                @php
+                    $lowStockProductsCount = \App\Models\Product::where('stock_quantity', '<=', 5)->count();
+                @endphp
+                @if($lowStockProductsCount > 0)
+                    <a href="{{ route('admin.products.index') }}" class="relative p-2 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 hover:bg-amber-500/25 transition-all flex items-center justify-center" title="{{ $lowStockProductsCount }}টি পণ্যের স্টক শেষ পর্যায়ে!">
+                        <i data-lucide="bell-ring" class="w-4 h-4 text-amber-400 animate-pulse"></i>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-mono font-bold flex items-center justify-center animate-bounce">
+                            {{ $lowStockProductsCount }}
+                        </span>
+                    </a>
+                @endif
+
+                <!-- Quick Manual Order Button -->
+                <a href="{{ route('admin.orders.create') }}" class="hidden sm:flex px-3.5 py-1.5 rounded-full bg-gradient-to-r from-cyan-500 to-indigo-600 hover:scale-105 text-white text-xs font-bold font-mono items-center space-x-1.5 shadow-neon-cyan transition-all">
+                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                    <span>+ নতুন অর্ডার</span>
+                </a>
+
                 <!-- Sleek Minimalist 1-Click Language Switcher (Compact Pill) -->
                 @php
                     $isBn = \App\Helpers\LocalizationHelper::getLocale() === 'bn';
@@ -308,7 +327,7 @@
                 </a>
 
                 <!-- Live Storefront Badge -->
-                <a href="{{ route('home') }}" target="_blank" class="hidden sm:flex px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold items-center space-x-1.5 hover:bg-emerald-500/20 transition-all">
+                <a href="{{ route('home') }}" target="_blank" class="hidden md:flex px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold items-center space-x-1.5 hover:bg-emerald-500/20 transition-all">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                     <span>{{ \App\Helpers\LocalizationHelper::get('admin_live_store') }} ↗</span>
                 </a>
