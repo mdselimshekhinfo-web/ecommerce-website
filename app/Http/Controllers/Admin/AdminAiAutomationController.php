@@ -40,6 +40,14 @@ class AdminAiAutomationController extends Controller
         $autoDiscountLimit = ThemeSetting::get('ai_auto_discount_limit', '10');
         $waTemplate = ThemeSetting::get('ai_wa_template', "আসসালামু আলাইকুম {customer_name} ভাই!\n\nNEXUS DOKAN থেকে আপনার অর্ডারটি প্রস্তুত করা হচ্ছে:\n📦 পণ্য: {product_name}\n💵 বিল: {total_amount}\n\nঅর্ডারটি কনফার্ম করতে 'হ্যাঁ' অথবা বাতিল করতে 'না' লিখে রিপ্লাই দিন।");
         
+        // Telephony & BD IP TSP Settings
+        $voiceProvider = ThemeSetting::get('voice_gateway_provider', 'alaap_bd_ip');
+        $bdIpNumber = ThemeSetting::get('bd_ip_number', '09696123456');
+        $sipServerHost = ThemeSetting::get('sip_server_host', 'sip.amberit.com.bd');
+        $sipUsername = ThemeSetting::get('sip_username', '');
+        $sipPassword = ThemeSetting::get('sip_password', '');
+        $sipApiKey = ThemeSetting::get('sip_api_key', '');
+
         $twilioSid = ThemeSetting::get('twilio_account_sid', '');
         $twilioToken = ThemeSetting::get('twilio_auth_token', '');
         $twilioFrom = ThemeSetting::get('twilio_phone_number', '');
@@ -63,6 +71,12 @@ class AdminAiAutomationController extends Controller
             'botGreeting',
             'autoDiscountLimit',
             'waTemplate',
+            'voiceProvider',
+            'bdIpNumber',
+            'sipServerHost',
+            'sipUsername',
+            'sipPassword',
+            'sipApiKey',
             'twilioSid',
             'twilioToken',
             'twilioFrom',
@@ -83,6 +97,12 @@ class AdminAiAutomationController extends Controller
             'ai_bot_greeting' => 'nullable|string|max:500',
             'ai_auto_discount_limit' => 'nullable|numeric|min:0|max:50',
             'ai_wa_template' => 'nullable|string|max:1000',
+            'voice_gateway_provider' => 'nullable|string|max:50',
+            'bd_ip_number' => 'nullable|string|max:50',
+            'sip_server_host' => 'nullable|string|max:255',
+            'sip_username' => 'nullable|string|max:255',
+            'sip_password' => 'nullable|string|max:255',
+            'sip_api_key' => 'nullable|string|max:255',
             'twilio_account_sid' => 'nullable|string|max:255',
             'twilio_auth_token' => 'nullable|string|max:255',
             'twilio_phone_number' => 'nullable|string|max:50',
@@ -95,7 +115,7 @@ class AdminAiAutomationController extends Controller
             ThemeSetting::set($key, $value ?? '');
         }
 
-        return back()->with('success', '⚡ এআই অটোমেশন সেটিংস ও টেলিকম কনফিগারেশন সফলভাবে সংরক্ষিত হয়েছে!');
+        return back()->with('success', '⚡ এআই অটোমেশন ও বিডি আইপি টেলিফোনি (Alaap/096) গেটওয়ে সফলভাবে সংরক্ষিত হয়েছে!');
     }
 
     /**
@@ -137,12 +157,18 @@ class AdminAiAutomationController extends Controller
 
         $voiceScript = "আসসালামু আলাইকুম! NEXUS DOKAN থেকে ভার্চুয়াল অ্যাসিস্ট্যান্ট বলছি। আপনি আমাদের ওয়েবসাইট থেকে {$productName} এর জন্য একটি অর্ডার করেছেন। ডেলিভারি চার্জ সহ সর্বমোট প্রদেয় বিল {$totalFormatted} টাকা। আপনি কি অর্ডারটি কনফার্ম করছেন? দয়া করে হ্যাঁ অথবা না বলুন।";
 
+        $provider = ThemeSetting::get('voice_gateway_provider', 'alaap_bd_ip');
+        $callerId = ThemeSetting::get('bd_ip_number', '09696123456');
+
         return response()->json([
             'success' => true,
             'phone' => $phone,
             'customer_name' => $customerName,
             'voice_script' => $voiceScript,
-            'telephony_status' => 'AI Voice Engine Dispatched to ' . $phone,
+            'provider' => $provider,
+            'caller_id' => $callerId,
+            'tel_uri' => 'tel:' . preg_replace('/[^0-9+]/', '', $phone),
+            'telephony_status' => "📞 Caller ID: {$callerId} (BD IP TSP) -> Routing Call to {$phone}",
         ]);
     }
 

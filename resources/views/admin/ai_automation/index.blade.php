@@ -347,42 +347,99 @@
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- Left: Telecom Gateway Configuration (Twilio / Vapi) (6 Cols) -->
+        <!-- ================================================================= -->
+        <!-- TAB 3: বাংলা ভয়েস কলিং ও বিডি আইপি টেলিফোনি (Alaap / 096 IP TSP) -->
+        <!-- ================================================================= -->
+        <div x-show="activeTab === 'voice'" x-cloak class="space-y-6">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left: Telecom & BD IP TSP Gateway Configuration (6 Cols) -->
                 <div class="lg:col-span-6 space-y-4">
-                    <form action="{{ route('admin.ai_automation.save_settings') }}" method="POST" class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+                    <form action="{{ route('admin.ai_automation.save_settings') }}" method="POST" class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4" x-data="{ provider: '{{ $voiceProvider }}' }">
                         @csrf
                         
                         <div class="flex items-center space-x-2 text-purple-400 border-b border-slate-800 pb-3">
                             <i data-lucide="radio-tower" class="w-5 h-5"></i>
-                            <h4 class="font-cyber font-bold text-sm text-white">রিয়েল টেলিকম সেলুলার গেটওয়ে কনফিগারেশন</h4>
-                        </div>
-
-                        <p class="text-xs text-slate-400">
-                            সরাসরি কাস্টমারের সিমে স্বয়ংক্রিয় ফোন কল পাঠাতে Twilio / Retell AI অ্যাকাউন্ট তথ্য যুক্ত করুন। খালি রাখলে ব্রাউজারের বিল্ট-ইন বাংলা ভয়েস ইঞ্জিন ব্যবহৃত হবে।
-                        </p>
-
-                        <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-300">Twilio Account SID</label>
-                            <input type="text" name="twilio_account_sid" value="{{ $twilioSid }}" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                                   class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                            <h4 class="font-cyber font-bold text-sm text-white">টেলিকম ও বিডি আইপি গেটওয়ে কনফিগারেশন</h4>
                         </div>
 
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-300">Twilio Auth Token</label>
-                            <input type="password" name="twilio_auth_token" value="{{ $twilioToken }}" placeholder="••••••••••••••••••••••••••••••••"
-                                   class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                            <label class="text-xs font-bold text-slate-300">ভয়েস গেটওয়ে প্রোভাইডার নির্বাচন করুন</label>
+                            <select name="voice_gateway_provider" x-model="provider" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-400">
+                                <option value="alaap_bd_ip">🇧🇩 BTCL আলাপের আইপি নাম্বার (09696xxxxxx)</option>
+                                <option value="amberit_sip">🇧🇩 Amber IT / Brilliant Connect SIP Trunk (096xxxxxxx)</option>
+                                <option value="twilio">🌍 Twilio International Cloud Voice</option>
+                                <option value="browser_tts">💻 ব্রাউজার বিল্ট-ইন বাংলা ভয়েস ইঞ্জিন (SpeechSynthesis)</option>
+                            </select>
                         </div>
 
-                        <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-300">Twilio Caller ID (Phone Number)</label>
-                            <input type="text" name="twilio_phone_number" value="{{ $twilioFrom }}" placeholder="+1234567890"
-                                   class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                        <!-- BD IP TSP Settings (Alaap & Amber IT) -->
+                        <div class="space-y-3 p-3.5 rounded-xl bg-slate-950 border border-purple-500/30" x-show="provider === 'alaap_bd_ip' || provider === 'amberit_sip'">
+                            <div class="flex items-center justify-between text-[11px] text-purple-300 font-bold border-b border-slate-800 pb-1.5">
+                                <span>🇧🇩 বিডি আইপি টেলিফোনি (096xx) অ্যাকাউন্ট ক্রেডেনশিয়ালস</span>
+                                <span class="text-emerald-400 text-[10px]">Active SIP</span>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-300">আপনার আলাপের আইপি / কলার আইডি নাম্বার</label>
+                                <input type="text" name="bd_ip_number" value="{{ $bdIpNumber }}" placeholder="09696123456 বা 09638123456"
+                                       class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                                <p class="text-[10px] text-slate-500">গ্রাহকের ফোনে এই নাম্বারটি কলার আইডি হিসেবে শো করবে</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-300">SIP সার্ভার হোস্ট</label>
+                                    <input type="text" name="sip_server_host" value="{{ $sipServerHost }}" placeholder="sip.amberit.com.bd"
+                                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-300">SIP ইউজারনেম</label>
+                                    <input type="text" name="sip_username" value="{{ $sipUsername }}" placeholder="8809696XXXXXX"
+                                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-300">SIP সিক্রেট / পাসওয়ার্ড</label>
+                                    <input type="password" name="sip_password" value="{{ $sipPassword }}" placeholder="••••••••••••"
+                                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-xs font-bold text-slate-300">REST Voice API Key (ঐচ্ছিক)</label>
+                                    <input type="password" name="sip_api_key" value="{{ $sipApiKey }}" placeholder="••••••••••••"
+                                           class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Twilio Settings -->
+                        <div class="space-y-3 p-3.5 rounded-xl bg-slate-950 border border-purple-500/30" x-show="provider === 'twilio'">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-300">Twilio Account SID</label>
+                                <input type="text" name="twilio_account_sid" value="{{ $twilioSid }}" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                                       class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-300">Twilio Auth Token</label>
+                                <input type="password" name="twilio_auth_token" value="{{ $twilioToken }}" placeholder="••••••••••••••••••••••••••••••••"
+                                       class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-300">Twilio Caller ID</label>
+                                <input type="text" name="twilio_phone_number" value="{{ $twilioFrom }}" placeholder="+1234567890"
+                                       class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                            </div>
                         </div>
 
                         <div class="pt-2">
                             <button type="submit" class="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center space-x-2 shadow-lg">
                                 <i data-lucide="save" class="w-4 h-4"></i>
-                                <span>টেলিকম গেটওয়ে সেভ করুন</span>
+                                <span>গেটওয়ে কনফিগারেশন সেভ করুন</span>
                             </button>
                         </div>
                     </form>
@@ -394,7 +451,7 @@
                         <h4 class="font-cyber font-bold text-xs text-purple-400 uppercase tracking-wider">
                             লাইভ বাংলা ভয়েস কল ডায়ালার ও টেস্ট
                         </h4>
-                        <span class="text-[10px] font-mono text-slate-500">Bangla Speech Synthesis</span>
+                        <span class="text-[10px] font-mono text-emerald-400">096 IP TSP Enabled</span>
                     </div>
 
                     <!-- Direct Dialer -->
@@ -403,13 +460,20 @@
                         <div class="flex items-center space-x-2">
                             <input type="text" x-model="dialPhone" placeholder="019XXXXXXXX"
                                    class="flex-1 bg-slate-900 border border-purple-500/40 rounded-xl px-3.5 py-2.5 text-xs font-bold text-purple-300 focus:outline-none focus:border-purple-400 font-mono">
+                            
                             <button type="button" @click="dialCustomVoiceCall()" 
                                     :disabled="calling"
-                                    class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500 text-white font-bold text-xs uppercase flex items-center space-x-2 shadow-lg disabled:opacity-50 transition-all">
+                                    class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500 text-white font-bold text-xs uppercase flex items-center space-x-1.5 shadow-lg disabled:opacity-50 transition-all">
                                 <i data-lucide="phone" class="w-4 h-4"></i>
-                                <span x-text="calling ? 'কল হচ্ছে...' : 'কল করুন 📞'"></span>
+                                <span x-text="calling ? 'কল হচ্ছে...' : 'AI কল 📞'"></span>
                             </button>
+
+                            <a :href="'tel:' + dialPhone" 
+                               class="p-2.5 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center" title="Alaap / ডায়ালারে সরাসরি কল ওপেন করুন">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
                         </div>
+                        <p class="text-[10px] text-slate-500">কলার আইডি: <b class="text-purple-300 font-mono">{{ $bdIpNumber ?: '09696xxxxxx' }} (Alaap / BD IP TSP)</b></p>
                     </div>
 
                     <!-- Idle Screen -->
@@ -417,7 +481,7 @@
                         <div class="w-10 h-10 mx-auto rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
                             <i data-lucide="phone-call" class="w-5 h-5"></i>
                         </div>
-                        <p class="text-xs text-slate-300 font-bold">ফোন নম্বর দিয়ে "কল করুন" বাটনে চাপুন</p>
+                        <p class="text-xs text-slate-300 font-bold">ফোন নম্বর দিয়ে "AI কল" বাটনে চাপুন</p>
                         <p class="text-[11px] text-slate-500">স্পিকারে স্বয়ংক্রিয় স্পষ্ট বাংলায় ভয়েস কল শোনা যাবে</p>
                     </div>
 
@@ -456,6 +520,10 @@
                         </div>
                     </template>
                 </div>
+
+            </div>
+
+        </div>
 
             </div>
 
