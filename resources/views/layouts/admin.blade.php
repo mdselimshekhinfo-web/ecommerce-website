@@ -81,176 +81,174 @@
             </a>
         </div>
 
-        <!-- Navigation Links (Clean Accordion Menus) -->
-        <nav class="flex-1 px-3 py-4 space-y-1.5 text-xs font-semibold overflow-y-auto"
+        <!-- Navigation Links (Modern Clean Categorized Structure) -->
+        <nav class="flex-1 px-3 py-4 space-y-1 text-xs font-semibold overflow-y-auto"
              x-data="{ 
-                 openMenu: '{{ request()->routeIs('admin.orders.*', 'admin.analytics.*', 'admin.live_chat.*', 'admin.ai_automation.*') ? 'sales' : (request()->routeIs('admin.products.*', 'admin.categories.*', 'admin.suppliers.*', 'admin.purchase_orders.*') ? 'inventory' : (request()->routeIs('admin.landing-pages.*', 'admin.abandoned_carts.*', 'admin.sms.*', 'admin.reviews.*', 'admin.coupons.*', 'admin.customers.*') ? 'marketing' : (request()->routeIs('admin.theme.*', 'admin.pages.*') ? 'appearance' : (request()->routeIs('admin.gateways.*', 'admin.marketing.pixels*', 'admin.settings.*', 'admin.staff.*', 'admin.fraud.*') ? 'settings' : '')))) }}',
+                 openMenu: '{{ request()->routeIs('admin.orders.*', 'admin.abandoned_carts.*', 'admin.analytics.*') ? 'sales' : (request()->routeIs('admin.products.*', 'admin.categories.*', 'admin.suppliers.*', 'admin.purchase_orders.*') ? 'inventory' : (request()->routeIs('admin.ai_automation.*', 'admin.live_chat.*') ? 'ai' : (request()->routeIs('admin.landing-pages.*', 'admin.sms.*', 'admin.coupons.*', 'admin.reviews.*', 'admin.customers.*') ? 'marketing' : (request()->routeIs('admin.theme.*', 'admin.pages.*') ? 'design' : (request()->routeIs('admin.gateways.*', 'admin.marketing.pixels*', 'admin.staff.*', 'admin.fraud.*', 'admin.settings.*') ? 'settings' : ''))))) }}',
                  toggle(menu) {
                      this.openMenu = (this.openMenu === menu) ? '' : menu;
                  }
              }">
 
-            <!-- 1. Standalone Direct Dashboard Link -->
+            <!-- 1. ড্যাশবোর্ড (Dashboard) -->
             <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/40 shadow-neon-cyan font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
                 <i data-lucide="layout-dashboard" class="w-4 h-4 text-cyan-400"></i>
                 <span class="tracking-wide">{{ \App\Helpers\LocalizationHelper::get('admin_dashboard') }}</span>
             </a>
 
-            <!-- 2. Accordion: Sales & Orders -->
+            <!-- 2. অর্ডার ও সেলস (Orders & Sales) -->
             <div class="space-y-1">
                 <button type="button" @click="toggle('sales')" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all font-mono text-[11px] uppercase tracking-wider">
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all text-xs">
                     <span class="flex items-center space-x-2.5">
-                        <i data-lucide="shopping-cart" class="w-4 h-4 text-cyan-400"></i>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_sales_group') }}</span>
+                        <i data-lucide="shopping-bag" class="w-4 h-4 text-cyan-400"></i>
+                        <span>অর্ডার ও সেলস</span>
                     </span>
                     <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'sales' ? 'rotate-180 text-cyan-400' : 'text-slate-600'"></i>
                 </button>
 
                 <div x-show="openMenu === 'sales'" x-collapse class="pl-7 pr-2 py-1 space-y-1">
-                    <a href="{{ route('admin.orders.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.orders.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_orders') }}</span>
+                    <a href="{{ route('admin.orders.index') }}" class="flex items-center justify-between px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.orders.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>সব অর্ডার তালিকা</span>
+                        @php $pendingCnt = \App\Models\Order::whereIn('order_status', ['pending', 'processing'])->count(); @endphp
+                        @if($pendingCnt > 0)
+                            <span class="px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-mono font-bold">{{ $pendingCnt }}</span>
+                        @endif
                     </a>
-                    <a href="{{ route('admin.live_chat.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.live_chat.*') ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_live_chat') }} 💬</span>
-                    </a>
-                    <a href="{{ route('admin.ai_automation.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.ai_automation.*') ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_ai_automation') }} ⚡</span>
+                    <a href="{{ route('admin.abandoned_carts.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.abandoned_carts.*') ? 'bg-emerald-500/15 text-emerald-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>অসম্পূর্ণ কার্ট রিকভারি</span>
                     </a>
                     <a href="{{ route('admin.analytics.pnl') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.analytics.*') ? 'bg-emerald-500/15 text-emerald-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_pnl') }}</span>
+                        <span>লাভ-ক্ষতি রিপোর্ট (P&L)</span>
                     </a>
                 </div>
             </div>
 
-            <!-- 3. Accordion: Products & Inventory -->
+            <!-- 3. প্রোডাক্ট ও ইনভেন্টরি (Catalog & Inventory) -->
             <div class="space-y-1">
                 <button type="button" @click="toggle('inventory')" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all font-mono text-[11px] uppercase tracking-wider">
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all text-xs">
                     <span class="flex items-center space-x-2.5">
-                        <i data-lucide="package" class="w-4 h-4 text-indigo-400"></i>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_inventory_group') }}</span>
+                        <i data-lucide="boxes" class="w-4 h-4 text-indigo-400"></i>
+                        <span>প্রোডাক্ট ও স্টক</span>
                     </span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'inventory' ? 'rotate-180 text-cyan-400' : 'text-slate-600'"></i>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'inventory' ? 'rotate-180 text-indigo-400' : 'text-slate-600'"></i>
                 </button>
 
                 <div x-show="openMenu === 'inventory'" x-collapse class="pl-7 pr-2 py-1 space-y-1">
-                    <a href="{{ route('admin.products.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.products.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_products') }}</span>
+                    <a href="{{ route('admin.products.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.products.*') ? 'bg-indigo-500/15 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>সব প্রোডাক্টস</span>
                     </a>
-                    <a href="{{ route('admin.categories.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.categories.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_categories') }}</span>
+                    <a href="{{ route('admin.categories.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.categories.*') ? 'bg-indigo-500/15 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>ক্যাটাগরি সমূহ</span>
                     </a>
-                    <a href="{{ route('admin.suppliers.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.suppliers.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_suppliers') }}</span>
+                    <a href="{{ route('admin.suppliers.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.suppliers.*') ? 'bg-indigo-500/15 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>সাপ্লায়ার লেজার</span>
                     </a>
-                    <a href="{{ route('admin.purchase_orders.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.purchase_orders.*') ? 'bg-pink-500/15 text-pink-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_purchase_orders') }}</span>
+                    <a href="{{ route('admin.purchase_orders.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.purchase_orders.*') ? 'bg-indigo-500/15 text-indigo-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>পারচেজ ও স্টক ইন</span>
                     </a>
                 </div>
             </div>
 
-            <!-- 4. Accordion: Marketing & Funnels -->
+            <!-- 4. 🤖 AI কন্ট্রোল সেন্টার (Unified AI Hub & Auto-Pilot) -->
+            <div class="space-y-1">
+                <button type="button" @click="toggle('ai')" 
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-purple-300 hover:text-white hover:bg-purple-950/40 border border-purple-500/20 transition-all text-xs">
+                    <span class="flex items-center space-x-2.5">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-purple-400 animate-pulse"></i>
+                        <span class="font-bold">AI অটোমেশন হাব</span>
+                    </span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'ai' ? 'rotate-180 text-purple-400' : 'text-slate-600'"></i>
+                </button>
+
+                <div x-show="openMenu === 'ai'" x-collapse class="pl-7 pr-2 py-1 space-y-1">
+                    <a href="{{ route('admin.ai_automation.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.ai_automation.*') ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>AI কন্ট্রোল সেন্টার ⚡</span>
+                    </a>
+                    <a href="{{ route('admin.live_chat.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.live_chat.*') ? 'bg-cyan-500/20 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>লাইভ সাপোর্ট ও অটো-পাইলট 💬</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 5. মার্কেটিং ও কাস্টমার (Marketing & CRM) -->
             <div class="space-y-1">
                 <button type="button" @click="toggle('marketing')" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all font-mono text-[11px] uppercase tracking-wider">
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all text-xs">
                     <span class="flex items-center space-x-2.5">
-                        <i data-lucide="zap" class="w-4 h-4 text-yellow-400"></i>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_marketing_group') }}</span>
+                        <i data-lucide="megaphone" class="w-4 h-4 text-pink-400"></i>
+                        <span>মার্কেটিং ও সিআরএম</span>
                     </span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'marketing' ? 'rotate-180 text-cyan-400' : 'text-slate-600'"></i>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'marketing' ? 'rotate-180 text-pink-400' : 'text-slate-600'"></i>
                 </button>
 
                 <div x-show="openMenu === 'marketing'" x-collapse class="pl-7 pr-2 py-1 space-y-1">
-                    <a href="{{ route('admin.landing-pages.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.landing-pages.*') ? 'bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-pink-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_landing_pages') }}</span>
+                    <a href="{{ route('admin.landing-pages.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.landing-pages.*') ? 'bg-pink-500/20 text-pink-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>১-পেজ ল্যান্ডিং পেজ</span>
                     </a>
-                    <a href="{{ route('admin.abandoned_carts.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.abandoned_carts.*') ? 'bg-emerald-500/15 text-emerald-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_cart_recovery') }}</span>
+                    <a href="{{ route('admin.coupons.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.coupons.*') ? 'bg-pink-500/15 text-pink-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>কুপন ও ডিসকাউন্ট</span>
                     </a>
-                    <a href="{{ route('admin.sms.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.sms.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_sms_hub') }}</span>
+                    <a href="{{ route('admin.customers.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.customers.*') ? 'bg-pink-500/15 text-pink-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>কাস্টমার তালিকা (CRM)</span>
                     </a>
-                    <a href="{{ route('admin.reviews.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.reviews.*') ? 'bg-amber-500/15 text-amber-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_reviews') }}</span>
+                    <a href="{{ route('admin.reviews.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.reviews.*') ? 'bg-pink-500/15 text-pink-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>কাস্টমার রিভিউ</span>
                     </a>
-                    <a href="{{ route('admin.coupons.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.coupons.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_coupons') }}</span>
-                    </a>
-                    <a href="{{ route('admin.customers.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.customers.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_vip_crm') }}</span>
+                    <a href="{{ route('admin.sms.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.sms.*') ? 'bg-pink-500/15 text-pink-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>এসএমএস নোটিফিকেশন</span>
                     </a>
                 </div>
             </div>
 
-            <!-- 5. Accordion: Appearance & Pages -->
+            <!-- 6. ডিজাইন ও পেজ (Storefront Appearance) -->
             <div class="space-y-1">
-                <button type="button" @click="toggle('appearance')" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all font-mono text-[11px] uppercase tracking-wider">
+                <button type="button" @click="toggle('design')" 
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all text-xs">
                     <span class="flex items-center space-x-2.5">
-                        <i data-lucide="palette" class="w-4 h-4 text-pink-400"></i>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_appearance_group') }}</span>
+                        <i data-lucide="palette" class="w-4 h-4 text-emerald-400"></i>
+                        <span>ওয়েবসাইট ডিজাইন</span>
                     </span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'appearance' ? 'rotate-180 text-cyan-400' : 'text-slate-600'"></i>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'design' ? 'rotate-180 text-emerald-400' : 'text-slate-600'"></i>
                 </button>
 
-                <div x-show="openMenu === 'appearance'" x-collapse class="pl-7 pr-2 py-1 space-y-1">
-                    <a href="{{ route('admin.theme.studio') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.theme.*') ? 'bg-pink-500/20 text-pink-300 font-bold shadow-neon-pink' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_theme_studio') }}</span>
+                <div x-show="openMenu === 'design'" x-collapse class="pl-7 pr-2 py-1 space-y-1">
+                    <a href="{{ route('admin.theme.studio') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.theme.*') ? 'bg-emerald-500/20 text-emerald-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>ভিজ্যুয়াল থিম স্টুডিও</span>
                     </a>
-                    <a href="{{ route('admin.pages.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.pages.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_policy_pages') }}</span>
+                    <a href="{{ route('admin.pages.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.pages.*') ? 'bg-emerald-500/15 text-emerald-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>পলিসি ও কাস্টম পেজ</span>
                     </a>
                 </div>
             </div>
 
-            <!-- 6. Accordion: Settings & Integrations -->
+            <!-- 7. সেটিংস ও কনফিগারেশন (Settings & Gateways) -->
             <div class="space-y-1">
                 <button type="button" @click="toggle('settings')" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all font-mono text-[11px] uppercase tracking-wider">
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900/80 transition-all text-xs">
                     <span class="flex items-center space-x-2.5">
-                        <i data-lucide="settings" class="w-4 h-4 text-emerald-400"></i>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_settings_group') }}</span>
+                        <i data-lucide="settings-2" class="w-4 h-4 text-slate-400"></i>
+                        <span>সিস্টেম সেটিংস</span>
                     </span>
-                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'settings' ? 'rotate-180 text-cyan-400' : 'text-slate-600'"></i>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-200" :class="openMenu === 'settings' ? 'rotate-180 text-slate-400' : 'text-slate-600'"></i>
                 </button>
 
                 <div x-show="openMenu === 'settings'" x-collapse class="pl-7 pr-2 py-1 space-y-1">
-                    <a href="{{ route('admin.gateways.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.gateways.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_gateway_hub') }}</span>
+                    <a href="{{ route('admin.gateways.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.gateways.*') ? 'bg-slate-800 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>পেমেন্ট গেটওয়ে (bKash/Nagad)</span>
                     </a>
-                    <a href="{{ route('admin.marketing.pixels') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.marketing.pixels*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_pixel_hub') }}</span>
+                    <a href="{{ route('admin.marketing.pixels') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.marketing.pixels*') ? 'bg-slate-800 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>মার্কেটিং পিক্সেল (FB/Google)</span>
                     </a>
-                    <a href="{{ route('admin.staff.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.staff.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_staff') }}</span>
+                    <a href="{{ route('admin.staff.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.staff.*') ? 'bg-slate-800 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>স্টাফ ও রোল পারমিশন</span>
                     </a>
-                    <a href="{{ route('admin.fraud.blacklist') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.fraud.*') ? 'bg-pink-500/15 text-pink-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_blacklist') }}</span>
+                    <a href="{{ route('admin.fraud.blacklist') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.fraud.*') ? 'bg-slate-800 text-red-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>ফ্রড শিল্ড ও ব্ল্যাকলিস্ট</span>
                     </a>
-                    <a href="{{ route('admin.settings.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.settings.*') ? 'bg-cyan-500/15 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
-                        <span>•</span>
-                        <span>{{ \App\Helpers\LocalizationHelper::get('admin_store_settings') }}</span>
+                    <a href="{{ route('admin.settings.index') }}" class="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all {{ request()->routeIs('admin.settings.*') ? 'bg-slate-800 text-cyan-300 font-bold' : 'text-slate-400 hover:text-white hover:bg-slate-900' }}">
+                        <span>সাধারণ স্টোর সেটিংস</span>
                     </a>
                 </div>
             </div>
@@ -259,7 +257,7 @@
             <div class="pt-3 border-t border-slate-800/80">
                 <a href="{{ route('home') }}" target="_blank" class="flex items-center space-x-2.5 px-3.5 py-2 rounded-xl text-emerald-400 hover:bg-emerald-500/10 transition-all font-mono text-xs">
                     <i data-lucide="external-link" class="w-4 h-4"></i>
-                    <span>{{ \App\Helpers\LocalizationHelper::get('admin_live_store') }} ↗</span>
+                    <span>লাইভ ওয়েবসাইট দেখুন ↗</span>
                 </a>
             </div>
 
