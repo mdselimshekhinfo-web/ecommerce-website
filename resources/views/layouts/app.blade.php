@@ -750,6 +750,22 @@
 
     <!-- 6. Floating Enterprise AI & Live Support Assistant Widget -->
     @if($enableAiAssistant)
+    
+    <!-- Floating Direct Facebook Messenger Button -->
+    @php
+        $fbMessengerUrl = $siteSettings['facebook_messenger_url'] ?? ('https://m.me/' . ($siteSettings['facebook_page_username'] ?? 'nexusdokan'));
+    @endphp
+    <a href="{{ $fbMessengerUrl }}" 
+       target="_blank" 
+       class="fixed bottom-6 right-44 z-40 w-14 h-14 rounded-2xl bg-blue-600 hover:bg-blue-500 p-0.5 shadow-lg shadow-blue-500/30 hover:scale-105 transition-all flex items-center justify-center group select-none"
+       title="Facebook Messenger এ সরাসরি চ্যাট করুন">
+        <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-blue-400 group-hover:text-blue-300 transition-colors relative">
+            <i data-lucide="message-square" class="w-7 h-7"></i>
+            <span class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-400 border-2 border-slate-900 animate-ping"></span>
+            <span class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-400 border-2 border-slate-900"></span>
+        </div>
+    </a>
+
     <!-- Floating Direct WhatsApp Messenger Button -->
     @php
         $rawWa = preg_replace('/[^0-9]/', '', $whatsapp ?: '01947521688');
