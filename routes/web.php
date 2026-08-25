@@ -226,3 +226,7 @@ Route::post('/api/live-chat/send', [LiveChatController::class, 'sendMessage'])->
 Route::get('/api/live-chat/poll', [LiveChatController::class, 'pollMessages'])->name('live_chat.poll');
 Route::post('/api/live-chat/request-agent', [LiveChatController::class, 'requestHumanAgent'])->name('live_chat.request_agent');
 
+// Meta WhatsApp Cloud API Webhooks
+Route::get('/api/whatsapp/webhook', [\App\Http\Controllers\WhatsAppWebhookController::class, 'verifyWebhook'])->name('whatsapp.webhook.verify');
+Route::post('/api/whatsapp/webhook', [\App\Http\Controllers\WhatsAppWebhookController::class, 'handleIncoming'])->name('whatsapp.webhook.incoming');
+

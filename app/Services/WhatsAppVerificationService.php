@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\ThemeSetting;
 use App\Helpers\BanglaHelper;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class WhatsAppVerificationService
@@ -31,7 +33,66 @@ class WhatsAppVerificationService
             $cleanPhone = '88' . $cleanPhone;
         }
         $msg = self::generateVerificationMessage($order);
-        return "https://wa.me/{$cleanPhone}?text=" . rawurlencode($msg);
+        return "https://api.whatsapp.com/send?phone={$cleanPhone}&text=" . rawurlencode($msg);
+    }
+
+    /**
+     * Send automated WhatsApp message via Meta Cloud API using connected business number
+     */
+    public static function sendCloudMessage(string $recipientPhone, string $message): array
+    {
+        $phoneId = ThemeSetting::get('whatsapp_phone_number_id', '');
+        $token = ThemeSetting::get('whatsapp_cloud_token', '');
+
+        $cleanPhone = preg_replace('/[^0-9]/', '', $recipientPhone);
+        if (strlen($cleanPhone) === 11 && str_starts_with($cleanPhone, '01')) {
+            $cleanPhone = '88' . $cleanPhone;
+        }
+
+        if (empty($phoneId) || empty($token)) {
+            return [
+                'success' => false,
+                'mode' => 'simulated',
+                'message' => 'WhatsApp Cloud API credentials not configured. Using 1-Click Web Dispatch.',
+                'recipient' => $cleanPhone,
+            ];
+        }
+
+        try {
+            $response = Http::withToken($token)
+                ->post("https://graph.facebook.com/v18.0/{$phoneId}/messages", [
+                    'messaging_product' => 'whatsapp',
+                    'recipient_type' => 'individual',
+                    'to' => $cleanPhone,
+                    'type' => 'text',
+                    'text' => [
+                        'preview_url' => false,
+                        'body' => $message,
+                    ],
+                ]);
+
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'mode' => 'cloud_api',
+                    'response' => $response->json(),
+                ];
+            } else {
+                Log::error('WhatsApp Cloud API Error', ['response' => $response->body()]);
+                return [
+                    'success' => false,
+                    'mode' => 'cloud_api_failed',
+                    'error' => $response->body(),
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::error('WhatsApp Cloud API Exception: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'mode' => 'exception',
+                'error' => $e->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -69,7 +130,7 @@ class WhatsAppVerificationService
         $lower = mb_strtolower(trim($replyText), 'UTF-8');
 
         // Confirmation keywords
-        $positiveWords = ['হ্যাঁ', 'হ্যা', 'হুম', 'yes', 'confirm', '1', 'send', 'পাঠান', 'পাঠিয়ে দিন', 'দিবেন', 'নিব', 'নিবো', 'ok', 'okay'];
+        $positiveWords = ['হ্যাঁ', 'হ্যা', 'হুম', 'yes', 'confirm', '1', 'send', 'পাঠান', 'পাঠিয়ে দিন', 'দিবেন', 'নিব', 'নিবো', 'ok', 'okay', 'ha', 'haa'];
         $isConfirmed = false;
         foreach ($positiveWords as $pw) {
             if (str_contains($lower, $pw)) {
@@ -79,7 +140,7 @@ class WhatsAppVerificationService
         }
 
         // Cancellation keywords
-        $negativeWords = ['না', 'no', 'cancel', 'বাতিল', 'লাগবে না', 'ভুল', 'চাই না', '0'];
+        $negativeWords = ['না', 'no', 'cancel', 'বাতিল', 'লাগবে না', 'ভুল', 'চাই না', '0', 'na'];
         $isCancelled = false;
         foreach ($negativeWords as $nw) {
             if (str_contains($lower, $nw)) {
@@ -100,7 +161,10 @@ class WhatsAppVerificationService
                 'admin_notes' => ($order->admin_notes ? $order->admin_notes . "\n" : '') . '✓ Auto-Verified via WhatsApp AI & Booked in Steadfast Courier with Tracking #' . $trackingId,
             ]);
 
-            $replyMsg = "🎉 অনেক ধন্যবাদ {$order->customer_name} ভাই! আপনার অর্ডারটি কনফার্ম করা হয়েছে।\n\n🚚 *কুরিয়ার বুকিং সম্পন্ন:* Steadfast Courier\n🔍 *ট্র্যাকিং আইডি:* #{$trackingId}\n\nইনশাআল্লাহ দ্রুততম সময়ে পার্সেলটি আপনার ঠিকানায় পৌঁছে যাবে!";
+            $replyMsg = "🎉 অনেক ধন্যবাদ {$order->customer_name} ভাই! আপনার অর্ডারটি সফলভাবে কনফার্ম করা হয়েছে।\n\n🚚 *কুরিয়ার বুকিং সম্পন্ন:* Steadfast Courier\n🔍 *ট্র্যাকিং আইডি:* #{$trackingId}\n\nইনশাআল্লাহ দ্রুততম সময়ে পার্সেলটি আপনার ঠিকানায় পৌঁছে যাবে!";
+
+            // Send automated reply back over Cloud API if configured
+            self::sendCloudMessage($phone, $replyMsg);
 
             return [
                 'success' => true,
@@ -124,18 +188,24 @@ class WhatsAppVerificationService
                 }
             }
 
+            $cancelReply = "আপনার অনুরোধ অনুযায়ী অর্ডারটি বাতিল করা হয়েছে। ভবিষ্যতে আবারও আমাদের সাথে কেনাকাটা করার আমন্ত্রণ রইল। ভালো থাকবেন!";
+            self::sendCloudMessage($phone, $cancelReply);
+
             return [
                 'success' => true,
                 'action' => 'cancelled',
                 'order_id' => $order->id,
-                'reply' => "আপনার অনুরোধ অনুযায়ী অর্ডারটি বাতিল করা হয়েছে। ভবিষ্যতে আবারও আমাদের সাথে কেনাকাটা করার আমন্ত্রণ রইল। ভালো থাকবেন!",
+                'reply' => $cancelReply,
             ];
         } else {
+            $clarifyReply = "অর্ডারটি নিশ্চিত করতে অনুগ্রহ করে *'হ্যাঁ'* অথবা বাতিল করতে *'না'* লিখে পাঠান।";
+            self::sendCloudMessage($phone, $clarifyReply);
+
             return [
                 'success' => true,
                 'action' => 'clarification_needed',
                 'order_id' => $order->id,
-                'reply' => "অর্ডারটি নিশ্চিত করতে অনুগ্রহ করে *'হ্যাঁ'* অথবা বাতিল করতে *'না'* লিখে পাঠান।",
+                'reply' => $clarifyReply,
             ];
         }
     }

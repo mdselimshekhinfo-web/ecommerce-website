@@ -40,6 +40,13 @@ class AdminAiAutomationController extends Controller
         $autoDiscountLimit = ThemeSetting::get('ai_auto_discount_limit', '10');
         $waTemplate = ThemeSetting::get('ai_wa_template', "আসসালামু আলাইকুম {customer_name} ভাই!\n\nNEXUS DOKAN থেকে আপনার অর্ডারটি প্রস্তুত করা হচ্ছে:\n📦 পণ্য: {product_name}\n💵 বিল: {total_amount}\n\nঅর্ডারটি কনফার্ম করতে 'হ্যাঁ' অথবা বাতিল করতে 'না' লিখে রিপ্লাই দিন।");
         
+        // WhatsApp Cloud Business Settings
+        $waBusinessPhone = ThemeSetting::get('whatsapp_business_phone', '+8801947521688');
+        $waPhoneNumberId = ThemeSetting::get('whatsapp_phone_number_id', '');
+        $waCloudToken = ThemeSetting::get('whatsapp_cloud_token', '');
+        $waWebhookToken = ThemeSetting::get('whatsapp_webhook_token', 'nexus_wa_token_2026');
+        $waAutoReply = ThemeSetting::get('whatsapp_auto_reply_enabled', '1');
+
         // Telephony & BD IP TSP Settings
         $voiceProvider = ThemeSetting::get('voice_gateway_provider', 'alaap_bd_ip');
         $bdIpNumber = ThemeSetting::get('bd_ip_number', '09696123456');
@@ -80,6 +87,11 @@ class AdminAiAutomationController extends Controller
             'botGreeting',
             'autoDiscountLimit',
             'waTemplate',
+            'waBusinessPhone',
+            'waPhoneNumberId',
+            'waCloudToken',
+            'waWebhookToken',
+            'waAutoReply',
             'voiceProvider',
             'bdIpNumber',
             'sipServerHost',
@@ -132,6 +144,11 @@ class AdminAiAutomationController extends Controller
             'ai_bot_greeting' => 'nullable|string|max:500',
             'ai_auto_discount_limit' => 'nullable|numeric|min:0|max:50',
             'ai_wa_template' => 'nullable|string|max:1000',
+            'whatsapp_business_phone' => 'nullable|string|max:50',
+            'whatsapp_phone_number_id' => 'nullable|string|max:100',
+            'whatsapp_cloud_token' => 'nullable|string|max:500',
+            'whatsapp_webhook_token' => 'nullable|string|max:100',
+            'whatsapp_auto_reply_enabled' => 'nullable|string',
             'voice_gateway_provider' => 'nullable|string|max:50',
             'bd_ip_number' => 'nullable|string|max:50',
             'sip_server_host' => 'nullable|string|max:255',
@@ -150,7 +167,7 @@ class AdminAiAutomationController extends Controller
             ThemeSetting::set($key, $value ?? '');
         }
 
-        return back()->with('success', '⚡ এআই অটোমেশন ও বিডি আইপি টেলিফোনি (Alaap/096) গেটওয়ে সফলভাবে সংরক্ষিত হয়েছে!');
+        return back()->with('success', '⚡ এআই অটোমেশন, WhatsApp বিজনেস গেটওয়ে ও বিডি আইপি টেলিফোনি সফলভাবে সংরক্ষিত হয়েছে!');
     }
 
     /**
