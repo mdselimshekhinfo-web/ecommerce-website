@@ -5,9 +5,9 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Filter Bar -->
-    <div class="admin-glass rounded-2xl p-5 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <form action="{{ route('admin.orders.index') }}" method="GET" class="flex flex-wrap items-center gap-3 w-full sm:w-auto font-mono text-xs">
+    <!-- Filter & Action Bar -->
+    <div class="admin-glass rounded-2xl p-5 border border-slate-800 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        <form action="{{ route('admin.orders.index') }}" method="GET" class="flex flex-wrap items-center gap-3 font-mono text-xs">
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Order #, Phone, TrxID..." 
                    class="bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-white focus:outline-none focus:border-cyan-400 w-56">
 
@@ -21,10 +21,16 @@
                 <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
             </select>
 
-            <button type="submit" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold">
-                Filter Orders
+            <button type="submit" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 font-bold transition-all">
+                ফিল্টার করুন
             </button>
         </form>
+
+        <a href="{{ route('admin.orders.create') }}" 
+           class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-pink-500 hover:scale-[1.02] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 shadow-neon-cyan transition-all">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>+ ম্যানুয়াল অর্ডার এন্ট্রি (FB / WhatsApp / POS)</span>
+        </a>
     </div>
 
     <!-- Orders Table -->
