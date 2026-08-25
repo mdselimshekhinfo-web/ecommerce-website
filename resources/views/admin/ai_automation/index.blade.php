@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('page-title', 'AI অটোমেশন কন্ট্রোল সেন্টার')
+@section('page-title', 'Enterprise AI অটোমেশন কন্ট্রোল সেন্টার')
 
 @section('content')
 <div class="space-y-6" x-data="aiControlCenter()">
@@ -19,15 +19,15 @@
             <div>
                 <div class="flex items-center gap-2.5 flex-wrap">
                     <h2 class="font-cyber font-black text-xl text-white tracking-wide">
-                        AI অটোমেশন কন্ট্রোল সেন্টার
+                        Enterprise AI কমান্ড ও অটোমেশন হাব
                     </h2>
                     <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-mono font-bold flex items-center gap-1.5">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                        <span>সিস্টেম লাইভ ও সক্রিয়</span>
+                        <span>AI Core 2.0 Active</span>
                     </span>
                 </div>
                 <p class="text-xs text-slate-400 mt-1 max-w-xl">
-                    ওয়েবসাইট সেলস চ্যাটবট, WhatsApp ১-ক্লিক ভেরিফিকেশন, বাংলা ভয়েস কল এবং গুগল অটো-এসইও—সবকিছু এক জায়গা থেকে সহজে নিয়ন্ত্রণ করুন।
+                    রিয়েল-টাইম সেলস চ্যাটবট, WhatsApp ১-ক্লিক ভেরিফিকেশন, বাংলা ভয়েস কল এবং গুগল অটো-এসইও সম্পূর্ণ স্বয়ংক্রিয়ভাবে নিয়ন্ত্রণ করুন।
                 </p>
             </div>
         </div>
@@ -37,7 +37,7 @@
             <a href="{{ route('admin.live_chat.index') }}" 
                class="px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-400 text-xs font-bold text-slate-200 hover:text-cyan-300 transition-all flex items-center space-x-2 shadow-sm">
                 <i data-lucide="messages-square" class="w-4 h-4 text-cyan-400"></i>
-                <span>লাইভ চ্যাট ডেস্ক ↗</span>
+                <span>লাইভ সাপোর্ট ডেস্ক ↗</span>
             </a>
             
             <form action="{{ route('admin.ai_automation.generate_seo') }}" method="POST">
@@ -51,60 +51,60 @@
         </div>
     </div>
 
-    <!-- 4 Clean Summary Cards -->
+    <!-- Real-Time AI Performance & Analytics Suite (4 KPIs) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        <div class="admin-glass p-5 rounded-2xl border border-slate-800 space-y-1.5 hover:border-purple-500/40 transition-all cursor-pointer" @click="activeTab = 'chat'">
+        <div class="admin-glass p-5 rounded-2xl border border-slate-800 space-y-1.5 hover:border-cyan-500/40 transition-all cursor-pointer" @click="activeTab = 'chat'">
             <div class="flex items-center justify-between">
-                <span class="text-slate-400 text-xs font-medium">এআই সেলস অটো-পাইলট</span>
-                <i data-lucide="bot" class="w-4 h-4 text-cyan-400"></i>
+                <span class="text-slate-400 text-xs font-medium">এআই কথোপকথন সেশন</span>
+                <i data-lucide="messages-square" class="w-4 h-4 text-cyan-400"></i>
             </div>
             <div class="flex items-baseline justify-between">
-                <h3 class="text-xl font-black text-white font-mono">২৪/৭ সক্রিয়</h3>
-                <span class="text-[11px] text-emerald-400 font-bold">Auto Booking</span>
+                <h3 class="text-2xl font-black text-white font-mono">{{ $aiConversationsCount }} টি চ্যাট</h3>
+                <span class="text-[11px] text-cyan-400 font-bold">Live Pulse</span>
             </div>
-            <p class="text-[11px] text-slate-500">গ্রাহকদের সাথে চ্যাট করে অর্ডার বুক করে</p>
+            <p class="text-[11px] text-slate-500">গ্রাহকদের সাথে স্বয়ংক্রিয় কথোপকথন</p>
         </div>
 
-        <div class="admin-glass p-5 rounded-2xl border border-slate-800 space-y-1.5 hover:border-emerald-500/40 transition-all cursor-pointer" @click="activeTab = 'whatsapp'">
+        <div class="admin-glass p-5 rounded-2xl border border-slate-800 space-y-1.5 hover:border-emerald-500/40 transition-all cursor-pointer" @click="activeTab = 'chat'">
             <div class="flex items-center justify-between">
-                <span class="text-slate-400 text-xs font-medium">WhatsApp ভেরিফাইড</span>
-                <i data-lucide="message-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span class="text-slate-400 text-xs font-medium">এআই জেনারেটেড সেলস</span>
+                <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-400"></i>
             </div>
             <div class="flex items-baseline justify-between">
-                <h3 class="text-xl font-black text-emerald-400 font-mono">{{ $verifiedOrdersCount }} টি অর্ডার</h3>
-                <span class="text-[11px] text-slate-400">১-ক্লিক নিশ্চিতকরণ</span>
+                <h3 class="text-2xl font-black text-emerald-400 font-mono">{{ \App\Helpers\BanglaHelper::formatTaka($aiRevenue) }}</h3>
+                <span class="text-[11px] text-emerald-400 font-bold">{{ $aiOrdersCount }} টি অর্ডার</span>
             </div>
-            <p class="text-[11px] text-slate-500">'হ্যাঁ' রিপ্লাইয়ে সরাসরি কুরিয়ারে বুকিং</p>
+            <p class="text-[11px] text-slate-500">চ্যাটের মাধ্যমে সরাসরি কনফার্মড সেলস</p>
         </div>
 
-        <div class="admin-glass p-5 rounded-2xl border border-slate-800 space-y-1.5 hover:border-purple-500/40 transition-all cursor-pointer" @click="activeTab = 'voice'">
+        <div class="admin-glass p-5 rounded-2xl border border-slate-800 space-y-1.5 hover:border-purple-500/40 transition-all cursor-pointer" @click="activeTab = 'whatsapp'">
             <div class="flex items-center justify-between">
-                <span class="text-slate-400 text-xs font-medium">বাংলা ভয়েস কলিং</span>
-                <i data-lucide="phone-call" class="w-4 h-4 text-purple-400"></i>
+                <span class="text-slate-400 text-xs font-medium">WhatsApp ও ভয়েস ভেরিফাইড</span>
+                <i data-lucide="shield-check" class="w-4 h-4 text-purple-400"></i>
             </div>
             <div class="flex items-baseline justify-between">
-                <h3 class="text-xl font-black text-purple-300 font-mono">Bangla TTS</h3>
-                <span class="text-[11px] text-purple-400 font-bold">Ready</span>
+                <h3 class="text-2xl font-black text-purple-300 font-mono">{{ $verifiedOrdersCount }} টি অর্ডার</h3>
+                <span class="text-[11px] text-purple-400 font-bold">Zero Return Risk</span>
             </div>
-            <p class="text-[11px] text-slate-500">স্বয়ংক্রিয় স্পষ্ট বাংলায় ভয়েস কল</p>
+            <p class="text-[11px] text-slate-500">১-ক্লিক ভেরিফিকেশন ও অটো-কুরিয়ার বুকিং</p>
         </div>
 
-        <div class="admin-glass p-5 rounded-2xl border border-slate-800 space-y-1.5 hover:border-cyan-500/40 transition-all cursor-pointer" @click="activeTab = 'seo'">
+        <div class="admin-glass p-5 rounded-2xl border border-slate-800 space-y-1.5 hover:border-amber-500/40 transition-all cursor-pointer" @click="activeTab = 'seo'">
             <div class="flex items-center justify-between">
                 <span class="text-slate-400 text-xs font-medium">গুগল এসইও অপ্টিমাইজড</span>
                 <i data-lucide="globe" class="w-4 h-4 text-amber-400"></i>
             </div>
             <div class="flex items-baseline justify-between">
-                <h3 class="text-xl font-black text-white font-mono">{{ $seoOptimizedCount }} / {{ $productsCount }} পণ্য</h3>
-                <span class="text-[11px] text-cyan-400 font-bold">১০০% রেডি</span>
+                <h3 class="text-2xl font-black text-white font-mono">{{ $seoOptimizedCount }} / {{ $productsCount }} পণ্য</h3>
+                <span class="text-[11px] text-amber-400 font-bold">100% Ready</span>
             </div>
-            <p class="text-[11px] text-slate-500">Google Rich Snippets & Sitemap</p>
+            <p class="text-[11px] text-slate-500">Google Rich Snippets & Structured Schema</p>
         </div>
 
     </div>
 
-    <!-- Clean Tabbed Interface (Organized & Easy) -->
+    <!-- Clean Tabbed Interface (Organized & Powerful) -->
     <div class="admin-glass rounded-3xl p-6 sm:p-8 border border-slate-800 space-y-6">
         
         <!-- Tab Navigation Bar -->
@@ -113,21 +113,21 @@
                     class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0"
                     :class="activeTab === 'chat' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-900'">
                 <i data-lucide="bot" class="w-4 h-4"></i>
-                <span>১. এআই সেলস চ্যাটবট (Auto-Pilot)</span>
+                <span>১. এআই সেলস চ্যাটবট ও পারসোনা (Auto-Pilot)</span>
             </button>
 
             <button type="button" @click="activeTab = 'whatsapp'" 
                     class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0"
                     :class="activeTab === 'whatsapp' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-900'">
                 <i data-lucide="message-circle" class="w-4 h-4"></i>
-                <span>২. WhatsApp ১-ক্লিক ভেরিফিকেশন</span>
+                <span>২. WhatsApp ভেরিফিকেশন ও টেমপ্লেট বিল্ডার</span>
             </button>
 
             <button type="button" @click="activeTab = 'voice'" 
                     class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0"
                     :class="activeTab === 'voice' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-900'">
                 <i data-lucide="phone-call" class="w-4 h-4"></i>
-                <span>৩. বাংলা ভয়েস কলিং এজেন্ট</span>
+                <span>৩. বাংলা ভয়েস কলিং ও টেলিকম গেটওয়ে</span>
             </button>
 
             <button type="button" @click="activeTab = 'seo'" 
@@ -139,150 +139,160 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- TAB 1: এআই সেলস চ্যাটবট ও অটো-পাইলট -->
+        <!-- TAB 1: এআই সেলস চ্যাটবট ও পারসোনা কনফিগারেশন -->
         <!-- ================================================================= -->
         <div x-show="activeTab === 'chat'" x-cloak class="space-y-6">
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Left: Explanatory & Controls (7 Cols) -->
+                
+                <!-- Left: AI Configuration Form (7 Cols) -->
                 <div class="lg:col-span-7 space-y-4">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-                        <div class="flex items-center justify-between">
+                    <form action="{{ route('admin.ai_automation.save_settings') }}" method="POST" class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+                        @csrf
+                        
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <h4 class="font-cyber font-bold text-sm text-white flex items-center gap-2">
-                                <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i>
-                                <span>অটো-পাইলট সেলস ইঞ্জিন কীভাবে কাজ করে?</span>
+                                <i data-lucide="sliders" class="w-4 h-4 text-cyan-400"></i>
+                                <span>এআই অ্যাসিস্ট্যান্ট কনফিগারেশন ও পারসোনা</span>
                             </h4>
-                            <span class="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-mono font-bold">24/7 LIVE</span>
+                            <span class="text-[11px] font-mono text-cyan-400">Live Auto-Pilot</span>
                         </div>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            কোনো ভিজিটর আপনার ওয়েবসাইটে আসলে নিচের ডানপাশের এআই অ্যাসিস্ট্যান্টের সাথে কথা বলতে পারে। ভিজিটর কোনো প্রোডাক্টের দাম জানতে চাইলে বা কিনতে চাইলে এআই সরাসরি চ্যাটেই অর্ডার তৈরি করে ফেলে—কোনো ফর্ম পূরণের ঝামেলা ছাড়াই!
-                        </p>
 
-                        <!-- 3 Step Workflow -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                            <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 space-y-1">
-                                <span class="w-5 h-5 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold font-mono flex items-center justify-center">১</span>
-                                <h5 class="text-xs font-bold text-white">পণ্য অনুসন্ধান</h5>
-                                <p class="text-[10px] text-slate-400 leading-tight">গ্রাহক লিখলেই সাথে সাথে ছবি ও দাম দেখায়</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-300">এআই বট নাম</label>
+                                <input type="text" name="ai_bot_name" value="{{ $botName }}" required
+                                       class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400">
                             </div>
-                            <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 space-y-1">
-                                <span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold font-mono flex items-center justify-center">২</span>
-                                <h5 class="text-xs font-bold text-white">ইন-চ্যাট বুকিং</h5>
-                                <p class="text-[10px] text-slate-400 leading-tight">নাম ও ফোন নম্বর নিয়ে চ্যাটে অর্ডার কনফার্ম করে</p>
-                            </div>
-                            <div class="p-3 rounded-xl bg-slate-950/70 border border-slate-800 space-y-1">
-                                <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold font-mono flex items-center justify-center">৩</span>
-                                <h5 class="text-xs font-bold text-white">সরাসরি নোটিফিকেশন</h5>
-                                <p class="text-[10px] text-slate-400 leading-tight">অ্যাডমিন ড্যাশবোর্ডে সাথে সাথে অর্ডার চলে আসে</p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Direct Action Card -->
-                    <div class="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 flex items-center justify-between">
-                        <div class="space-y-0.5">
-                            <h5 class="text-xs font-bold text-white">লাইভ চ্যাট ও সাপোর্ট ডেস্ক</h5>
-                            <p class="text-[11px] text-slate-400">গ্রাহকদের রিয়েল-টাইম মেসেজ দেখতে ও উত্তর দিতে সাপোর্ট ডেস্ক খুলুন</p>
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-300">কথা বলার ধরন (Persona Tone)</label>
+                                <select name="ai_bot_persona" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400">
+                                    <option value="polite_sales" {{ $botPersona === 'polite_sales' ? 'selected' : '' }}>বিনম্র ও প্রফেশনাল সেলস কনসালটেন্ট</option>
+                                    <option value="tech_guru" {{ $botPersona === 'tech_guru' ? 'selected' : '' }}>সাইবার গ্যাজেট ও টেক গুরু</option>
+                                    <option value="fast_direct" {{ $botPersona === 'fast_direct' ? 'selected' : '' }}>সরাসরি ও ফাস্ট অর্ডার টেকার</option>
+                                </select>
+                            </div>
                         </div>
-                        <a href="{{ route('admin.live_chat.index') }}" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-all flex items-center space-x-1.5 shrink-0 shadow-lg">
-                            <span>সাপোর্ট ডেস্ক 💬</span>
-                        </a>
-                    </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-300">স্বাগতম বার্তা (Greeting Message)</label>
+                            <textarea name="ai_bot_greeting" rows="2" 
+                                      class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-400 leading-relaxed">{{ $botGreeting }}</textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-slate-300">সর্বোচ্চ এআই ডিসকাউন্ট পারমিশন (%)</label>
+                                <input type="number" name="ai_auto_discount_limit" value="{{ $autoDiscountLimit }}" min="0" max="50"
+                                       class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono">
+                                <p class="text-[10px] text-slate-500">দরকষাকষি করলে এআই সর্বোচ্চ এই পরিমাণ ছাড় অফার করতে পারবে</p>
+                            </div>
+
+                            <div class="space-y-1.5 pt-2">
+                                <label class="flex items-center space-x-2 text-xs font-bold text-emerald-400 cursor-pointer">
+                                    <input type="checkbox" name="ai_auto_dispatch_courier" value="1" {{ $autoDispatchStatus === '1' ? 'checked' : '' }} class="rounded text-emerald-500 focus:ring-0">
+                                    <span>অর্ডার কনফার্ম হলেই অটো-কুরিয়ার বুকিং</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition-all flex items-center space-x-2 shadow-lg">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                <span>সেটিংস সংরক্ষণ করুন</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
-                <!-- Right: Mockup / Demonstration Card (5 Cols) -->
+                <!-- Right: Live Interactive Storefront Preview (5 Cols) -->
                 <div class="lg:col-span-5 p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
                         <div class="flex items-center space-x-2">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                            <span class="text-xs font-bold text-white">চ্যাটবট লাইভ ইন্টারঅ্যাকশন প্রিভিউ</span>
+                            <span class="text-xs font-bold text-white">রিয়েল-টাইম চ্যাট উইজেট লাইভ টেস্ট</span>
                         </div>
-                        <span class="text-[10px] font-mono text-cyan-400">Bangla & English</span>
+                        <span class="text-[10px] font-mono text-cyan-400">Voice + Text</span>
                     </div>
 
-                    <div class="space-y-2.5 text-xs">
+                    <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2.5 text-xs">
                         <div class="flex items-start space-x-2">
-                            <div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-300 shrink-0">👤</div>
-                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200">
-                                ভাইয়া, ভালো নয়েজ ক্যানসেলিং ইয়ারবাডস আছে?
-                            </div>
-                        </div>
-
-                        <div class="flex items-start space-x-2 justify-end">
-                            <div class="p-2.5 rounded-xl bg-gradient-to-r from-purple-900/60 to-cyan-900/60 border border-cyan-500/30 text-white text-right max-w-[85%]">
-                                🤖 আমাদের <b>AuraBlade ANC Pro</b> আছে! 48dB নয়েজ ক্যানসেলেশন ও 40 ঘণ্টা ব্যাটারি। দাম মাত্র <b>৳২,৯৫০</b>।<br>
-                                <span class="text-emerald-300 font-bold">অর্ডার করতে আপনার নাম ও ফোন নম্বর লিখুন!</span>
-                            </div>
                             <div class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-[10px] shrink-0">🤖</div>
-                        </div>
-
-                        <div class="flex items-start space-x-2">
-                            <div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-300 shrink-0">👤</div>
-                            <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200">
-                                আমি এক পিস নিব। নাম: সাদি, ফোন: 01947521688, ঠিকানা: উত্তরা ঢাকা
-                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 leading-relaxed text-[11px]" x-text="'{{ addslashes($botGreeting) }}'"></div>
                         </div>
 
                         <div class="flex items-start space-x-2 justify-end">
-                            <div class="p-2.5 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-200 text-right max-w-[85%]">
-                                🎉 <b>অর্ডার সফলভাবে বুক হয়েছে!</b><br>
-                                অর্ডার নম্বর: <b>#NX-2026-8912</b>। শীঘ্রই আমাদের প্রতিনিধি কনফার্মেশন কল করবেন।
+                            <div class="p-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-500 text-slate-950 font-bold text-right text-[11px]">
+                                ভাইয়া, AuraBlade ANC Pro ইয়ারবাডস নিতে চাই।
                             </div>
-                            <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-[10px] shrink-0">✓</div>
+                            <div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-[10px] text-slate-300 shrink-0">👤</div>
+                        </div>
+
+                        <div class="flex items-start space-x-2">
+                            <div class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-300 flex items-center justify-center text-[10px] shrink-0">🤖</div>
+                            <div class="p-2.5 rounded-xl bg-slate-950 border border-cyan-500/30 text-white space-y-1 text-[11px]">
+                                <p>🎉 দুর্দান্ত পছন্দ! AuraBlade ANC Pro এর মূল্য মাত্র <b>৳২,৯৫০</b>।</p>
+                                <p class="text-emerald-300 font-bold">অর্ডার সম্পন্ন করতে আপনার ফোন নম্বর ও ঠিকানা লিখুন!</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
 
         <!-- ================================================================= -->
-        <!-- TAB 2: WhatsApp ১-ক্লিক ভেরিফিকেশন -->
+        <!-- TAB 2: WhatsApp ভেরিফিকেশন ও টেমপ্লেট বিল্ডার -->
         <!-- ================================================================= -->
         <div x-show="activeTab === 'whatsapp'" x-cloak class="space-y-6">
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- Left: Explanation & WhatsApp URL Builder (6 Cols) -->
+                <!-- Left: Custom WhatsApp Template Builder (6 Cols) -->
                 <div class="lg:col-span-6 space-y-4">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-                        <div class="flex items-center space-x-2.5 text-emerald-400">
-                            <i data-lucide="message-square-quote" class="w-5 h-5"></i>
-                            <h4 class="font-cyber font-bold text-sm text-white">WhatsApp অর্ডার নিশ্চিতকরণ কীভাবে কাজ করে?</h4>
+                    <form action="{{ route('admin.ai_automation.save_settings') }}" method="POST" class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+                        @csrf
+                        
+                        <div class="flex items-center space-x-2 text-emerald-400 border-b border-slate-800 pb-3">
+                            <i data-lucide="message-circle" class="w-5 h-5"></i>
+                            <h4 class="font-cyber font-bold text-sm text-white">WhatsApp মেসেজ টেমপ্লেট কাস্টমাইজার</h4>
                         </div>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            কোনো কাস্টমার অর্ডার করার পর অ্যাডমিন প্যানেলে অর্ডারের পাশে <b class="text-emerald-400">[ Send WhatsApp Prompt 💬 ]</b> বাটন থাকে। ক্লিক করলে সাথে সাথে কাস্টমারের হোয়াটসঅ্যাপে প্রি-ফিল্ড বাংলা মেসেজ ওপেন হয়।
-                        </p>
-                        <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-emerald-300 text-xs space-y-1">
-                            <p class="font-bold">⚡ অটো-কুরিয়ার সুবিধা:</p>
-                            <p class="text-slate-300 text-[11px]">কাস্টমার মেসেজের উত্তরে <b>"হ্যাঁ"</b>, <b>"confirm"</b> বা <b>"পাঠিয়ে দিন"</b> লিখলেই অর্ডারটি স্বয়ংক্রিয়ভাবে <b>Processing</b> স্ট্যাটাসে চলে যাবে এবং স্টেডফাস্ট কুরিয়ারে ট্র্যাকিং আইডি সহ বুক হয়ে যাবে।</p>
-                        </div>
-                    </div>
 
-                    <!-- Live Message Preview Box -->
-                    <div class="p-4 rounded-2xl bg-[#0b141a] border border-emerald-500/30 space-y-2 text-xs font-sans text-slate-200">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-[11px] text-emerald-400">
-                            <span class="font-bold flex items-center gap-1.5"><i data-lucide="check-check" class="w-3.5 h-3.5"></i> WhatsApp Message Format</span>
-                            <span class="font-mono text-slate-500">100% Free wa.me</span>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-300">মেসেজ টেক্সট টেমপ্লেট</label>
+                            <textarea name="ai_wa_template" rows="5" 
+                                      class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-400 font-mono leading-relaxed">{{ $waTemplate }}</textarea>
                         </div>
-                        <div class="p-3 rounded-xl bg-[#202c33] border border-slate-700/60 leading-relaxed text-[11px]">
-                            আসসালামু আলাইকুম <b>শেয়খ সাদী</b> ভাই!<br><br>
-                            NEXUS DOKAN থেকে আপনার অর্ডারটি প্রস্তুত করা হচ্ছে:<br>
-                            📦 <b>পণ্য:</b> AuraBlade ANC Cyber Earbuds Pro (১ পিস)<br>
-                            💵 <b>বিল:</b> ৳৩,০১০ (ক্যাশ অন ডেলিভারি)<br>
-                            📍 <b>ঠিকানা:</b> উত্তরা, ঢাকা<br><br>
-                            অর্ডারটি নিশ্চিত করতে অনুগ্রহ করে <b>"হ্যাঁ"</b> অথবা বাতিল করতে <b>"না"</b> লিখে রিপ্লাই দিন।
+
+                        <!-- Dynamic Tag Badges -->
+                        <div class="space-y-1.5">
+                            <span class="text-[11px] text-slate-400 font-medium">ক্লিক করে টেমপ্লেটে ডায়নামিক ট্যাগ যুক্ত করুন:</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2 py-1 rounded-md bg-slate-950 border border-slate-800 text-[10px] font-mono text-cyan-300">{customer_name}</span>
+                                <span class="px-2 py-1 rounded-md bg-slate-950 border border-slate-800 text-[10px] font-mono text-cyan-300">{product_name}</span>
+                                <span class="px-2 py-1 rounded-md bg-slate-950 border border-slate-800 text-[10px] font-mono text-cyan-300">{total_amount}</span>
+                                <span class="px-2 py-1 rounded-md bg-slate-950 border border-slate-800 text-[10px] font-mono text-cyan-300">{order_number}</span>
+                            </div>
                         </div>
-                    </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition-all flex items-center space-x-2 shadow-lg">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                <span>টেমপ্লেট সেভ করুন</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Right: Interactive WhatsApp Simulation Tool (6 Cols) -->
-                <div class="lg:col-span-6 p-5 rounded-2xl bg-slate-950 border border-emerald-500/30 space-y-4">
+                <div class="lg:col-span-6 p-6 rounded-2xl bg-slate-950 border border-emerald-500/30 space-y-4">
                     <div class="flex items-center justify-between pb-2 border-b border-slate-800">
                         <h4 class="font-cyber font-bold text-xs text-emerald-400 uppercase tracking-wider">
-                            WhatsApp রিপ্লাই সিমুলেশন ও টেস্ট টুল
+                            WhatsApp রিপ্লাই ও অটো-কুরিয়ার সিমুলেটর
                         </h4>
-                        <span class="text-[10px] font-mono text-slate-500">Meta Webhook Test</span>
+                        <span class="text-[10px] font-mono text-slate-500">1-Click Dispatch</span>
                     </div>
 
                     <div class="space-y-3 text-xs">
@@ -304,8 +314,8 @@
                         </div>
 
                         <div class="flex items-center gap-2 pt-1 flex-wrap">
-                            <span class="text-[10px] text-slate-500">ক্লিক করে দ্রুত টেস্ট করুন:</span>
-                            <button type="button" @click="waInput = 'হ্যাঁ'; testWhatsAppReply()" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-slate-300 hover:text-white">"হ্যাঁ"</button>
+                            <span class="text-[10px] text-slate-500">দ্রুত টেস্ট বাটন:</span>
+                            <button type="button" @click="waInput = 'হ্যাঁ পাঠিয়ে দিন'; testWhatsAppReply()" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-slate-300 hover:text-white">"হ্যাঁ পাঠিয়ে দিন"</button>
                             <button type="button" @click="waInput = 'confirm'; testWhatsAppReply()" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-slate-300 hover:text-white">"confirm"</button>
                             <button type="button" @click="waInput = 'না বাতিল করুন'; testWhatsAppReply()" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[10px] text-pink-400 hover:text-pink-300">"না বাতিল"</button>
                         </div>
@@ -331,31 +341,65 @@
         </div>
 
         <!-- ================================================================= -->
-        <!-- TAB 3: এআই ভয়েস কলিং এজেন্ট -->
+        <!-- TAB 3: বাংলা ভয়েস কলিং ও টেলিকম গেটওয়ে -->
         <!-- ================================================================= -->
         <div x-show="activeTab === 'voice'" x-cloak class="space-y-6">
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- Left: Explanatory & Controls (6 Cols) -->
+                <!-- Left: Telecom Gateway Configuration (Twilio / Vapi) (6 Cols) -->
                 <div class="lg:col-span-6 space-y-4">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
-                        <div class="flex items-center space-x-2.5 text-purple-400">
-                            <i data-lucide="phone-forwarded" class="w-5 h-5"></i>
-                            <h4 class="font-cyber font-bold text-sm text-white">বাংলা এআই ভয়েস কলিং কীভাবে কাজ করে?</h4>
+                    <form action="{{ route('admin.ai_automation.save_settings') }}" method="POST" class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+                        @csrf
+                        
+                        <div class="flex items-center space-x-2 text-purple-400 border-b border-slate-800 pb-3">
+                            <i data-lucide="radio-tower" class="w-5 h-5"></i>
+                            <h4 class="font-cyber font-bold text-sm text-white">রিয়েল টেলিকম সেলুলার গেটওয়ে কনফিগারেশন</h4>
                         </div>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            কাস্টমার কোনো অর্ডার করলে আপনি সরাসরি ব্রাউজার থেকেই স্পষ্ট স্বাভাবিক বাংলায় স্বয়ংক্রিয় ফোন কল করতে পারেন। এআই ভার্চুয়াল অ্যাসিস্ট্যান্ট অর্ডারের তথ্য ও বিল পড়ে শোনাবে এবং কাস্টমার মুখে "হ্যাঁ" বা "না" বললে স্বয়ংক্রিয়ভাবে অর্ডার প্রসেস করবে।
+
+                        <p class="text-xs text-slate-400">
+                            সরাসরি কাস্টমারের সিমে স্বয়ংক্রিয় ফোন কল পাঠাতে Twilio / Retell AI অ্যাকাউন্ট তথ্য যুক্ত করুন। খালি রাখলে ব্রাউজারের বিল্ট-ইন বাংলা ভয়েস ইঞ্জিন ব্যবহৃত হবে।
                         </p>
-                        <div class="p-3 rounded-xl bg-purple-950/30 border border-purple-500/30 text-purple-300 text-xs space-y-1">
-                            <p class="font-bold">🎙️ স্পিচ ইঞ্জিন:</p>
-                            <p class="text-slate-300 text-[11px]">ব্রাউজারের বিল্ট-ইন বাংলা ভয়েস সিন্থেসিস ইঞ্জিন (SpeechSynthesis API) ব্যবহার করে লাইভ কথা বলে।</p>
+
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-300">Twilio Account SID</label>
+                            <input type="text" name="twilio_account_sid" value="{{ $twilioSid }}" placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                                   class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
                         </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-300">Twilio Auth Token</label>
+                            <input type="password" name="twilio_auth_token" value="{{ $twilioToken }}" placeholder="••••••••••••••••••••••••••••••••"
+                                   class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-300">Twilio Caller ID (Phone Number)</label>
+                            <input type="text" name="twilio_phone_number" value="{{ $twilioFrom }}" placeholder="+1234567890"
+                                   class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-purple-400 font-mono">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider transition-all flex items-center space-x-2 shadow-lg">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                <span>টেলিকম গেটওয়ে সেভ করুন</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right: Live Audio Dispatcher & Dialer (6 Cols) -->
+                <div class="lg:col-span-6 p-6 rounded-2xl bg-slate-950 border border-purple-500/30 space-y-4">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <h4 class="font-cyber font-bold text-xs text-purple-400 uppercase tracking-wider">
+                            লাইভ বাংলা ভয়েস কল ডায়ালার ও টেস্ট
+                        </h4>
+                        <span class="text-[10px] font-mono text-slate-500">Bangla Speech Synthesis</span>
                     </div>
 
-                    <!-- Direct Dialer Card -->
-                    <div class="p-5 rounded-2xl bg-slate-950 border border-purple-500/30 space-y-3">
-                        <label class="text-xs font-bold text-white block">যেকোনো নম্বরে এখনই টেস্ট কল করুন:</label>
+                    <!-- Direct Dialer -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-white block">যেকোনো ফোন নম্বরে এখনই টেস্ট কল করুন:</label>
                         <div class="flex items-center space-x-2">
                             <input type="text" x-model="dialPhone" placeholder="019XXXXXXXX"
                                    class="flex-1 bg-slate-900 border border-purple-500/40 rounded-xl px-3.5 py-2.5 text-xs font-bold text-purple-300 focus:outline-none focus:border-purple-400 font-mono">
@@ -367,24 +411,14 @@
                             </button>
                         </div>
                     </div>
-                </div>
-
-                <!-- Right: Active Call Screen Mockup (6 Cols) -->
-                <div class="lg:col-span-6 p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
-                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-                        <h4 class="font-cyber font-bold text-xs text-purple-400 uppercase tracking-wider">
-                            লাইভ কল মনিটর ও রেসপন্স
-                        </h4>
-                        <span class="text-[10px] font-mono text-slate-500">Live Audio Dispatch</span>
-                    </div>
 
                     <!-- Idle Screen -->
-                    <div x-show="!callActive && !voiceResult" class="p-8 rounded-2xl bg-slate-900/40 border border-slate-800/80 text-center space-y-2">
-                        <div class="w-12 h-12 mx-auto rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
-                            <i data-lucide="phone-call" class="w-6 h-6"></i>
+                    <div x-show="!callActive && !voiceResult" class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 text-center space-y-2">
+                        <div class="w-10 h-10 mx-auto rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                            <i data-lucide="phone-call" class="w-5 h-5"></i>
                         </div>
                         <p class="text-xs text-slate-300 font-bold">ফোন নম্বর দিয়ে "কল করুন" বাটনে চাপুন</p>
-                        <p class="text-[11px] text-slate-500">স্পিকারে স্বয়ংক্রিয় বাংলায় ভয়েস কল শোনা যাবে</p>
+                        <p class="text-[11px] text-slate-500">স্পিকারে স্বয়ংক্রিয় স্পষ্ট বাংলায় ভয়েস কল শোনা যাবে</p>
                     </div>
 
                     <!-- Active Connected Screen -->
@@ -436,16 +470,16 @@
                 
                 <!-- Left: Explanation & Action (6 Cols) -->
                 <div class="lg:col-span-6 space-y-4">
-                    <div class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
+                    <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3">
                         <div class="flex items-center space-x-2.5 text-amber-400">
                             <i data-lucide="sparkles" class="w-5 h-5"></i>
-                            <h4 class="font-cyber font-bold text-sm text-white">Google Auto-SEO & Schema কীভাবে কাজ করে?</h4>
+                            <h4 class="font-cyber font-bold text-sm text-white">Google Auto-SEO & Structured Schema</h4>
                         </div>
                         <p class="text-xs text-slate-300 leading-relaxed">
                             আপনার স্টোরের প্রতিটি প্রোডাক্টের জন্য স্বয়ংক্রিয়ভাবে গুগল সার্চ ফ্রেন্ডলি মেটা টাইটেল, বাংলা ও ইংরেজি ডেসক্রিপশন এবং JSON-LD Rich Snippet Schema তৈরি করে রাখা হয়। এতে গুগলে সার্চ করলে সরাসরি স্টার রেটিং, দাম ও ইন-স্টক স্ট্যাটাস শো করে।
                         </p>
                         <div class="flex items-center gap-3 pt-2">
-                            <a href="{{ route('sitemap') }}" target="_blank" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-400 text-xs font-mono text-cyan-300 transition-all flex items-center space-x-1.5">
+                            <a href="{{ route('sitemap') }}" target="_blank" class="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700 hover:border-cyan-400 text-xs font-mono text-cyan-300 transition-all flex items-center space-x-1.5">
                                 <i data-lucide="file-code" class="w-3.5 h-3.5"></i>
                                 <span>sitemap.xml দেখুন ↗</span>
                             </a>
@@ -462,7 +496,7 @@
                 </div>
 
                 <!-- Right: Google Search Card Mockup (6 Cols) -->
-                <div class="lg:col-span-6 p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+                <div class="lg:col-span-6 p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
                     <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-xs">
                         <span class="font-bold text-white flex items-center gap-1.5"><i data-lucide="search" class="w-3.5 h-3.5 text-cyan-400"></i> গুগল সার্চ প্রিভিউ</span>
                         <span class="text-[10px] font-mono text-emerald-400">Rich Snippet Validated</span>

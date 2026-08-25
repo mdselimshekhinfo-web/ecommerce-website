@@ -149,7 +149,7 @@ class EnterpriseAiAutomationTest extends TestCase
         // Admin opens hub
         $hubRes = $this->actingAs($admin)->get('/admin/ai-automation');
         $hubRes->assertStatus(200);
-        $hubRes->assertSee('ZERO-TOUCH DISPATCH');
+        $hubRes->assertSee('AI Core 2.0 Active');
 
         // Admin generates SEO
         $seoRes = $this->actingAs($admin)->post('/admin/ai-automation/generate-seo');

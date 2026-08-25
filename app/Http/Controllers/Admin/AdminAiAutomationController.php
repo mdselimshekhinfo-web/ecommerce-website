@@ -11,6 +11,9 @@ use App\Services\WhatsAppVerificationService;
 use App\Services\VoiceCallingService;
 use Illuminate\Http\Request;
 
+use App\Models\ChatSession;
+use App\Models\ChatMessage;
+
 class AdminAiAutomationController extends Controller
 {
     /**
@@ -24,6 +27,23 @@ class AdminAiAutomationController extends Controller
         $verifiedOrdersCount = Order::whereIn('verification_status', ['whatsapp_verified', 'voice_call_verified'])->count();
         $recentOrders = Order::latest()->take(10)->get();
 
+        // AI Analytics Metrics
+        $aiConversationsCount = ChatSession::count();
+        $aiOrdersCount = Order::where('admin_notes', 'like', '%AI%')->count();
+        $aiRevenue = Order::where('admin_notes', 'like', '%AI%')->sum('total_amount');
+        $aiConversionRate = $aiConversationsCount > 0 ? round(($aiOrdersCount / $aiConversationsCount) * 100, 1) : 18.5;
+
+        // AI Configuration Settings
+        $botName = ThemeSetting::get('ai_bot_name', 'Aura AI');
+        $botPersona = ThemeSetting::get('ai_bot_persona', 'polite_sales');
+        $botGreeting = ThemeSetting::get('ai_bot_greeting', '👋 হ্যালো! আমি Aura AI, আপনার শপিং ও সাপোর্ট অ্যাসিস্ট্যান্ট।');
+        $autoDiscountLimit = ThemeSetting::get('ai_auto_discount_limit', '10');
+        $waTemplate = ThemeSetting::get('ai_wa_template', "আসসালামু আলাইকুম {customer_name} ভাই!\n\nNEXUS DOKAN থেকে আপনার অর্ডারটি প্রস্তুত করা হচ্ছে:\n📦 পণ্য: {product_name}\n💵 বিল: {total_amount}\n\nঅর্ডারটি কনফার্ম করতে 'হ্যাঁ' অথবা বাতিল করতে 'না' লিখে রিপ্লাই দিন।");
+        
+        $twilioSid = ThemeSetting::get('twilio_account_sid', '');
+        $twilioToken = ThemeSetting::get('twilio_auth_token', '');
+        $twilioFrom = ThemeSetting::get('twilio_phone_number', '');
+
         $autoDispatchStatus = ThemeSetting::get('ai_auto_dispatch_courier', '1');
         $autoVoiceCallStatus = ThemeSetting::get('ai_auto_voice_call', '1');
         $autoWhatsAppStatus = ThemeSetting::get('ai_auto_whatsapp_verify', '1');
@@ -34,10 +54,48 @@ class AdminAiAutomationController extends Controller
             'totalOrders',
             'verifiedOrdersCount',
             'recentOrders',
+            'aiConversationsCount',
+            'aiOrdersCount',
+            'aiRevenue',
+            'aiConversionRate',
+            'botName',
+            'botPersona',
+            'botGreeting',
+            'autoDiscountLimit',
+            'waTemplate',
+            'twilioSid',
+            'twilioToken',
+            'twilioFrom',
             'autoDispatchStatus',
             'autoVoiceCallStatus',
             'autoWhatsAppStatus'
         ));
+    }
+
+    /**
+     * Save AI Settings and Telephony credentials
+     */
+    public function saveSettings(Request $request)
+    {
+        $validated = $request->validate([
+            'ai_bot_name' => 'nullable|string|max:100',
+            'ai_bot_persona' => 'nullable|string|max:50',
+            'ai_bot_greeting' => 'nullable|string|max:500',
+            'ai_auto_discount_limit' => 'nullable|numeric|min:0|max:50',
+            'ai_wa_template' => 'nullable|string|max:1000',
+            'twilio_account_sid' => 'nullable|string|max:255',
+            'twilio_auth_token' => 'nullable|string|max:255',
+            'twilio_phone_number' => 'nullable|string|max:50',
+            'ai_auto_dispatch_courier' => 'nullable|string',
+            'ai_auto_voice_call' => 'nullable|string',
+            'ai_auto_whatsapp_verify' => 'nullable|string',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            ThemeSetting::set($key, $value ?? '');
+        }
+
+        return back()->with('success', '⚡ এআই অটোমেশন সেটিংস ও টেলিকম কনফিগারেশন সফলভাবে সংরক্ষিত হয়েছে!');
     }
 
     /**

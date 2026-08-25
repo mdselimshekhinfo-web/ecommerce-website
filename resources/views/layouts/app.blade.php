@@ -748,7 +748,7 @@
     </div>
     @endif
 
-    <!-- 6. Floating Hybrid AI & Live Support Assistant Widget -->
+    <!-- 6. Floating Enterprise AI & Live Support Assistant Widget -->
     @if($enableAiAssistant)
     <div x-data="aiAssistant()" class="fixed bottom-6 right-6 z-40 select-none">
         <button @click="toggleChat()" class="relative group w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-pink-500 p-0.5 shadow-neon-cyan hover:scale-105 transition-all">
@@ -760,48 +760,121 @@
         </button>
 
         <div x-show="chatOpen" x-cloak @click.away="chatOpen = false"
-             class="absolute bottom-16 right-0 w-[330px] sm:w-[380px] bg-slate-950/95 border border-cyan-500/40 rounded-3xl shadow-2xl p-4 flex flex-col h-[520px] backdrop-blur-2xl z-50">
+             class="absolute bottom-16 right-0 w-[340px] sm:w-[400px] bg-slate-950/98 border border-cyan-500/40 rounded-3xl shadow-2xl p-4 flex flex-col h-[540px] backdrop-blur-2xl z-50">
             
             <!-- Chat Top Header -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                 <div class="flex items-center space-x-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-400">
-                        <i data-lucide="bot" class="w-4 h-4"></i>
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-purple-600 p-0.5 shadow-md flex items-center justify-center">
+                        <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center text-cyan-400">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i>
+                        </div>
                     </div>
                     <div>
                         <h4 class="font-cyber font-bold text-white text-xs flex items-center gap-1.5">
                             <span>AURA CYBER AI</span>
-                            <span class="text-[9px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono">HYBRID</span>
+                            <span class="text-[9px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold">2.0 ENTERPRISE</span>
                         </h4>
                         <p class="text-[10px] text-emerald-400 font-mono flex items-center">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>
-                            <span x-text="isHumanAssigned ? '👨‍💼 Live Human Support Connected' : '🤖 AI Auto-Pilot Sales Ready'"></span>
+                            <span x-text="isHumanAssigned ? '👨‍💼 Live Agent Connected' : '🤖 24/7 AI Auto-Pilot Ready'"></span>
                         </p>
                     </div>
                 </div>
-                <button @click="chatOpen = false" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/5 transition-colors">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
+
+                <div class="flex items-center space-x-1">
+                    <button @click="toggleVoiceOutput()" 
+                            :class="ttsEnabled ? 'text-cyan-400 bg-cyan-500/10' : 'text-slate-500 hover:text-slate-300'"
+                            class="p-1.5 rounded-lg border border-slate-800 transition-colors"
+                            :title="ttsEnabled ? 'ভয়েস রিড-আউট চালু' : 'ভয়েস রিড-আউট বন্ধ'">
+                        <i :data-lucide="ttsEnabled ? 'volume-2' : 'volume-x'" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button @click="chatOpen = false" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Messages Stream Area -->
-            <div class="flex-1 overflow-y-auto py-3 space-y-3 pr-1 text-xs font-mono" id="chatStream">
+            <div class="flex-1 overflow-y-auto py-3 space-y-3.5 pr-1 text-xs font-mono" id="chatStream">
                 <template x-for="msg in messages" :key="msg.id">
                     <div :class="msg.sender_type === 'customer' ? 'flex justify-end' : 'flex justify-start'">
-                        <div class="max-w-[85%] space-y-1">
+                        <div class="max-w-[88%] space-y-1">
                             
-                            <!-- Sender Label -->
-                            <div class="text-[9px] font-bold flex items-center gap-1"
+                            <!-- Sender Label & Voice Speaker Button -->
+                            <div class="text-[9px] font-bold flex items-center gap-1.5"
                                  :class="msg.sender_type === 'customer' ? 'justify-end text-cyan-400' : (msg.sender_type === 'agent' ? 'text-emerald-400' : 'text-purple-400')">
-                                <span x-text="msg.sender_type === 'customer' ? '👤 {{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'আপনি' : 'You' }}' : (msg.sender_type === 'agent' ? '👨‍💼 {{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'সাপোর্ট প্রতিনিধি' : 'Support Agent' }}' : '🤖 Aura AI (Auto-Pilot)')"></span>
+                                <span x-text="msg.sender_type === 'customer' ? '👤 {{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'আপনি' : 'You' }}' : (msg.sender_type === 'agent' ? '👨‍💼 {{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'সাপোর্ট প্রতিনিধি' : 'Support Agent' }}' : '🤖 Aura AI')"></span>
+                                
+                                <template x-if="msg.sender_type !== 'customer'">
+                                    <button @click="speakText(msg.message)" class="text-slate-500 hover:text-cyan-300 transition-colors" title="বাংলায় শুনুন">
+                                        <i data-lucide="volume-2" class="w-3 h-3"></i>
+                                    </button>
+                                </template>
                             </div>
 
                             <!-- Bubble Content -->
-                            <div :class="msg.sender_type === 'customer' ? 'bg-cyan-500 text-slate-950 font-bold rounded-2xl rounded-tr-none' : (msg.sender_type === 'agent' ? 'bg-emerald-950 border border-emerald-500/40 text-emerald-200 rounded-2xl rounded-tl-none' : 'bg-slate-900 border border-cyan-500/30 text-slate-200 rounded-2xl rounded-tl-none')"
+                            <div :class="msg.sender_type === 'customer' ? 'bg-gradient-to-r from-cyan-500 to-sky-500 text-slate-950 font-bold rounded-2xl rounded-tr-none' : (msg.sender_type === 'agent' ? 'bg-emerald-950/90 border border-emerald-500/40 text-emerald-200 rounded-2xl rounded-tl-none' : 'bg-slate-900 border border-cyan-500/30 text-slate-200 rounded-2xl rounded-tl-none')"
                                  class="px-3.5 py-2.5 text-xs leading-relaxed whitespace-pre-line shadow-md">
                                 <span x-html="formatMessage(msg.message)"></span>
 
-                                <!-- WhatsApp Button Payload -->
+                                <!-- 🛒 PRODUCT CAROUSEL PAYLOAD -->
+                                <template x-if="msg.message_type === 'product_carousel' && msg.payload && msg.payload.products">
+                                    <div class="mt-2.5 pt-2 border-t border-slate-800 space-y-2">
+                                        <template x-for="prod in msg.payload.products" :key="prod.id">
+                                            <div class="flex items-center space-x-2.5 p-2 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-cyan-500/40 transition-all">
+                                                <img :src="prod.thumbnail" class="w-11 h-11 object-cover rounded-lg shrink-0 border border-slate-700">
+                                                <div class="flex-1 min-w-0">
+                                                    <a :href="'/product/' + prod.slug" target="_blank" class="block font-bold text-white text-[11px] truncate hover:text-cyan-300" x-text="prod.name"></a>
+                                                    <div class="flex items-center space-x-1.5 text-[10px]">
+                                                        <span class="text-cyan-400 font-mono font-bold" x-text="prod.price"></span>
+                                                        <span x-show="prod.original_price" class="text-slate-500 line-through text-[9px]" x-text="prod.original_price"></span>
+                                                    </div>
+                                                </div>
+                                                <button @click="quickOrderProduct(prod.name)" class="px-2 py-1 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-[10px] whitespace-nowrap shadow">
+                                                    অর্ডার ⚡
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <!-- 📦 ORDER TRACKING PROGRESS PAYLOAD -->
+                                <template x-if="msg.message_type === 'order_tracking' && msg.payload">
+                                    <div class="mt-2.5 p-3 rounded-xl bg-slate-950 border border-cyan-500/40 space-y-2 text-[11px]">
+                                        <div class="flex items-center justify-between text-cyan-300 font-bold">
+                                            <span x-text="'#' + msg.payload.order_number"></span>
+                                            <span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-[9px] uppercase" x-text="msg.payload.status_label"></span>
+                                        </div>
+                                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                                            <div class="bg-gradient-to-r from-cyan-400 to-emerald-400 h-full rounded-full transition-all duration-500"
+                                                 :style="'width: ' + (msg.payload.step * 25) + '%'"></div>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                                            <span x-text="'Tracking: ' + msg.payload.tracking_code"></span>
+                                            <span x-text="msg.payload.courier_name"></span>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <!-- 🎁 COUPON CARDS PAYLOAD -->
+                                <template x-if="msg.message_type === 'coupon_cards' && msg.payload && msg.payload.coupons">
+                                    <div class="mt-2.5 pt-2 border-t border-slate-800 space-y-1.5">
+                                        <template x-for="cpn in msg.payload.coupons" :key="cpn.code">
+                                            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-amber-500/30 text-[10px]">
+                                                <div>
+                                                    <span class="font-mono font-bold text-amber-300 text-xs tracking-wider" x-text="cpn.code"></span>
+                                                    <p class="text-slate-400 text-[9px]" x-text="cpn.desc"></p>
+                                                </div>
+                                                <button @click="copyCouponCode(cpn.code)" class="px-2 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-bold">
+                                                    কপি ✓
+                                                </button>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <!-- 📱 WhatsApp Button Payload -->
                                 <template x-if="msg.message_type === 'whatsapp_redirect' && msg.payload">
                                     <div class="pt-2">
                                         <a :href="msg.payload.whatsapp_url" target="_blank" 
@@ -812,15 +885,18 @@
                                     </div>
                                 </template>
 
-                                <!-- Order Receipt Payload -->
+                                <!-- 📄 Order Receipt Payload -->
                                 <template x-if="msg.message_type === 'order_receipt' && msg.payload">
-                                    <div class="mt-2 p-2.5 rounded-xl bg-emerald-900/60 border border-emerald-400/50 text-[11px] text-emerald-200 space-y-1">
+                                    <div class="mt-2.5 p-3 rounded-xl bg-emerald-950/80 border border-emerald-400/50 text-[11px] text-emerald-200 space-y-1.5">
                                         <div class="font-black flex justify-between items-center text-white">
-                                            <span>✓ Order Confirmed</span>
-                                            <span class="font-mono" x-text="'#' + msg.payload.order_number"></span>
+                                            <span>✓ Order Placed</span>
+                                            <span class="font-mono text-cyan-300" x-text="'#' + msg.payload.order_number"></span>
                                         </div>
                                         <p class="text-[10px] text-slate-300" x-text="msg.payload.product_name"></p>
-                                        <p class="text-[10px] text-emerald-300 font-bold" x-text="'Total: ৳' + Number(msg.payload.total_amount).toLocaleString()"></p>
+                                        <div class="flex items-center justify-between text-[10px] pt-1 border-t border-emerald-800/60">
+                                            <span class="text-emerald-300 font-bold" x-text="'Total: ৳' + Number(msg.payload.total_amount).toLocaleString()"></span>
+                                            <a :href="msg.payload.invoice_url" target="_blank" class="text-cyan-300 font-bold underline hover:text-white">ইনভয়েস 📄</a>
+                                        </div>
                                     </div>
                                 </template>
                             </div>
@@ -830,34 +906,43 @@
                 </template>
 
                 <div x-show="botTyping" class="flex justify-start">
-                    <div class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-400 text-xs flex items-center space-x-1.5">
+                    <div class="bg-slate-900 border border-slate-700 rounded-2xl px-3.5 py-2 text-slate-400 text-xs flex items-center space-x-1.5 shadow-sm">
                         <span class="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-bounce"></span>
                         <span class="w-1.5 h-1.5 bg-pink-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
                         <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                        <span class="text-[10px] text-slate-500 font-mono ml-1">Aura AI ভাবছে...</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Preset Action Chips -->
-            <div class="flex items-center space-x-1.5 overflow-x-auto py-2 border-t border-slate-800/80 no-scrollbar">
-                <button @click="requestAgent()" class="text-[10px] px-2.5 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 whitespace-nowrap border border-emerald-500/40 font-bold transition-all">
-                    👨‍💼 {{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'সরাসরি এজেন্টের সাথে কথা বলুন' : 'Talk to Agent' }}
-                </button>
-                <button @click="askPreset('Delivery charges in BD?')" class="text-[10px] px-2 py-1 rounded-full bg-slate-900 hover:bg-cyan-500/20 text-slate-300 whitespace-nowrap border border-slate-800">
-                    📦 {{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'ডেলিভারি চার্জ' : 'Delivery Charge' }}
-                </button>
-                <button @click="askPreset('bKash payment policy?')" class="text-[10px] px-2 py-1 rounded-full bg-slate-900 hover:bg-pink-500/20 text-slate-300 whitespace-nowrap border border-slate-800">
-                    💳 {{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'বিকাশ পেমেন্ট' : 'bKash Payment' }}
+            <!-- Dynamic Quick Reply Action Chips -->
+            <div class="flex items-center space-x-1.5 overflow-x-auto py-2 border-t border-slate-800/80 no-scrollbar select-none">
+                <template x-for="chip in currentChips" :key="chip">
+                    <button @click="askPreset(chip)" class="text-[10px] px-2.5 py-1 rounded-full bg-slate-900 hover:bg-cyan-500/20 hover:border-cyan-400/50 text-slate-300 hover:text-white whitespace-nowrap border border-slate-800 transition-all font-medium">
+                        <span x-text="chip"></span>
+                    </button>
+                </template>
+                <button @click="requestAgent()" class="text-[10px] px-2.5 py-1 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 whitespace-nowrap border border-emerald-500/40 font-bold transition-all shrink-0">
+                    👨‍💼 {{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'সাপোর্ট এজেন্ট' : 'Support Agent' }}
                 </button>
             </div>
 
-            <!-- Chat Input Field -->
-            <form @submit.prevent="sendMessage()" class="mt-2 flex items-center space-x-2">
-                <input type="text" x-model="userInput" 
-                       :placeholder="isHumanAssigned ? '{{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'প্রতিনিধির সাথে কথা বলুন...' : 'Chat with live support agent...' }}' : '{{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'অর্ডার করতে নাম, ফোন ও ঠিকানা লিখুন...' : 'Type name, phone & address to order...' }}'" 
-                       class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400">
+            <!-- Chat Input Field with Voice Recognition (STT) -->
+            <form @submit.prevent="sendMessage()" class="mt-2 flex items-center space-x-2 relative">
                 
-                <button type="submit" class="p-2.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition-colors shadow-md">
+                <!-- Voice Input Mic Button -->
+                <button type="button" @click="toggleVoiceInput()" 
+                        :class="isListening ? 'bg-red-500 text-white animate-pulse shadow-lg' : 'bg-slate-900 border border-slate-700 text-slate-400 hover:text-cyan-400 hover:border-cyan-400'"
+                        class="p-2.5 rounded-2xl transition-all shrink-0" 
+                        :title="isListening ? 'শোনা হচ্ছে... কথা বলুন' : 'মুখে বলে অর্ডার করুন (Voice Input)'">
+                    <i :data-lucide="isListening ? 'mic' : 'mic-none'" class="w-4 h-4"></i>
+                </button>
+
+                <input type="text" x-model="userInput" 
+                       :placeholder="isListening ? '🎤 শুনছি... আপনার পণ্যের নাম বা ঠিকানা বলুন...' : (isHumanAssigned ? '{{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'প্রতিনিধির সাথে কথা বলুন...' : 'Chat with live agent...' }}' : '{{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'পণ্যের নাম বা অর্ডার করতে ঠিকানা লিখুন...' : 'Ask product or type phone & address...' }}')" 
+                       class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-all">
+                
+                <button type="submit" class="p-2.5 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 transition-all shadow-md shrink-0">
                     <i data-lucide="send" class="w-4 h-4"></i>
                 </button>
             </form>
@@ -1046,6 +1131,7 @@
         }
 
         function aiAssistant() {
+            const isBn = '{{ \App\Helpers\LocalizationHelper::getLocale() }}' === 'bn';
             return {
                 chatOpen: false,
                 botTyping: false,
@@ -1053,9 +1139,72 @@
                 isHumanAssigned: false,
                 messages: [],
                 pollInterval: null,
+                isListening: false,
+                recognition: null,
+                ttsEnabled: true,
+                currentChips: isBn ? ['🔥 সেরা ডিলস', '🎧 ANC ইয়ারবাডস', '⌨️ কিবোর্ড', '📦 ডেলিভারি চার্জ'] : ['Best Deals', 'Earbuds', 'Keyboards', 'Delivery Rates'],
 
                 init() {
-                    // Ready
+                    // Initialize Speech Recognition if supported
+                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        this.recognition = new SpeechRecognition();
+                        this.recognition.continuous = false;
+                        this.recognition.interimResults = false;
+                        this.recognition.lang = isBn ? 'bn-BD' : 'en-US';
+
+                        this.recognition.onresult = (event) => {
+                            const transcript = event.results[0][0].transcript;
+                            this.userInput = transcript;
+                            this.isListening = false;
+                            this.sendMessage();
+                        };
+
+                        this.recognition.onerror = () => {
+                            this.isListening = false;
+                        };
+
+                        this.recognition.onend = () => {
+                            this.isListening = false;
+                        };
+                    }
+                },
+
+                toggleVoiceInput() {
+                    if (!this.recognition) {
+                        alert(isBn ? 'আপনার ব্রাউজারে ভয়েস রিকগনিশন সাপোর্ট করে না।' : 'Voice speech recognition not supported in this browser.');
+                        return;
+                    }
+
+                    if (this.isListening) {
+                        this.recognition.stop();
+                        this.isListening = false;
+                    } else {
+                        this.isListening = true;
+                        try {
+                            this.recognition.start();
+                        } catch (e) {
+                            this.isListening = false;
+                        }
+                    }
+                },
+
+                toggleVoiceOutput() {
+                    this.ttsEnabled = !this.ttsEnabled;
+                    if (!this.ttsEnabled && 'speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                    }
+                },
+
+                speakText(text) {
+                    if (!('speechSynthesis' in window)) return;
+                    window.speechSynthesis.cancel();
+                    // Clean markdown asterisks
+                    const clean = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/[•#]/g, '');
+                    const utterance = new SpeechSynthesisUtterance(clean);
+                    utterance.lang = isBn ? 'bn-BD' : 'en-US';
+                    utterance.rate = 1.0;
+                    window.speechSynthesis.speak(utterance);
                 },
 
                 toggleChat() {
@@ -1065,6 +1214,7 @@
                         this.startPolling();
                     } else {
                         if (this.pollInterval) clearInterval(this.pollInterval);
+                        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
                     }
                     this.$nextTick(() => {
                         lucide.createIcons();
@@ -1119,6 +1269,16 @@
                     this.sendMessage();
                 },
 
+                quickOrderProduct(productName) {
+                    this.userInput = isBn ? `আমি ${productName} অর্ডার করতে চাই` : `I want to order ${productName}`;
+                    this.sendMessage();
+                },
+
+                copyCouponCode(code) {
+                    navigator.clipboard.writeText(code);
+                    alert(isBn ? `কুপন কোড '${code}' সফলভাবে কপি হয়েছে!` : `Coupon code '${code}' copied to clipboard!`);
+                },
+
                 sendMessage() {
                     const text = this.userInput.trim();
                     if (!text) return;
@@ -1148,6 +1308,12 @@
                         if (data.success) {
                             if (data.reply) {
                                 this.messages.push(data.reply);
+                                if (this.ttsEnabled) {
+                                    this.speakText(data.reply.message);
+                                }
+                            }
+                            if (data.chips && data.chips.length > 0) {
+                                this.currentChips = data.chips;
                             }
                             this.isHumanAssigned = data.is_assigned_to_human;
                             this.scrollBottom();

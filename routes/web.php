@@ -203,6 +203,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Enterprise AI Automation Command Hub (Auto-SEO, WhatsApp Verification & Voice Calling Agent)
     Route::get('/ai-automation', [AdminAiAutomationController::class, 'index'])->name('ai_automation.index');
+    Route::post('/ai-automation/save-settings', [AdminAiAutomationController::class, 'saveSettings'])->name('ai_automation.save_settings');
     Route::post('/ai-automation/generate-seo', [AdminAiAutomationController::class, 'generateAllSeo'])->name('ai_automation.generate_seo');
     Route::post('/ai-automation/simulate-whatsapp', [AdminAiAutomationController::class, 'simulateWhatsAppReply'])->name('ai_automation.simulate_whatsapp');
     Route::post('/ai-automation/dial-voice', [AdminAiAutomationController::class, 'dialVoiceCall'])->name('ai_automation.dial_voice');

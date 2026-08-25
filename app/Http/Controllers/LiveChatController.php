@@ -108,6 +108,7 @@ class LiveChatController extends Controller
                 'success' => true,
                 'user_message' => $userMsg,
                 'reply' => $botMsg,
+                'chips' => $aiResponse['chips'] ?? null,
                 'is_assigned_to_human' => $session->is_assigned_to_human,
             ]);
         }
