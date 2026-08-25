@@ -468,12 +468,15 @@
                                 <span x-text="calling ? 'কল হচ্ছে...' : 'AI কল 📞'"></span>
                             </button>
 
-                            <a :href="'tel:' + dialPhone" 
-                               class="p-2.5 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center" title="Alaap / ডায়ালারে সরাসরি কল ওপেন করুন">
+                            <button type="button" @click="
+                                navigator.clipboard.writeText(dialPhone);
+                                alert('📞 ফোন নম্বর (' + dialPhone + ') কপি করা হয়েছে!\nআপনার Dial App বা ফোনে পেস্ট করে কল করুন।');
+                                window.location.href = 'tel:' + dialPhone;
+                            " class="p-2.5 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center" title="Alaap / ডায়ালারে সরাসরি কল ওপেন করুন">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
-                            </a>
+                            </button>
                         </div>
-                        <p class="text-[10px] text-slate-500">কলার আইডি: <b class="text-purple-300 font-mono">{{ $bdIpNumber ?: '09696xxxxxx' }} (Alaap / BD IP TSP)</b></p>
+                        <p class="text-[10px] text-slate-500">কলার আইডি: <b class="text-purple-300 font-mono">{{ $bdIpNumber ?: '+8809678831374' }} (Dial / BD IP TSP)</b></p>
                     </div>
 
                     <!-- Idle Screen -->

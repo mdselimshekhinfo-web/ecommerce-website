@@ -163,11 +163,14 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
-                    <a href="tel:{{ $order->customer_phone }}" 
-                       class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] flex items-center justify-center space-x-1.5 transition-all text-center" title="Dial App বা ফোনে সরাসরি কল">
+                    <button type="button" @click="
+                        navigator.clipboard.writeText('{{ $order->customer_phone }}');
+                        alert('📞 কাস্টমারের ফোন নম্বর ({{ $order->customer_phone }}) কপি করা হয়েছে!\nআপনার Dial App বা ফোনে পেস্ট করে কল করুন।');
+                        window.location.href = 'tel:{{ $order->customer_phone }}';
+                    " class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] flex items-center justify-center space-x-1.5 transition-all text-center" title="Dial App বা ফোনে সরাসরি কল">
                         <i data-lucide="phone" class="w-3.5 h-3.5"></i>
                         <span>Dial App এ কল 📞</span>
-                    </a>
+                    </button>
 
                     <a href="https://wa.me/88{{ preg_replace('/[^0-9]/', '', $order->customer_phone) }}" target="_blank"
                        class="py-2.5 px-3 rounded-xl bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 font-bold text-[11px] flex items-center justify-center space-x-1.5 transition-all text-center">
