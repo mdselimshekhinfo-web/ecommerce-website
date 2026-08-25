@@ -11,6 +11,7 @@ use App\Services\AutoSeoService;
 use App\Services\AiMarketingCopyService;
 use App\Services\AiFraudScoreService;
 use App\Services\WhatsAppVerificationService;
+use App\Services\WhatsAppDeviceGatewayService;
 use Illuminate\Http\Request;
 
 class AdminAiAutomationController extends Controller
@@ -38,7 +39,11 @@ class AdminAiAutomationController extends Controller
         $autoDiscountLimit = ThemeSetting::get('ai_auto_discount_limit', '10');
         $autoDispatchStatus = ThemeSetting::get('ai_auto_dispatch_courier', '1');
         $storePhone = ThemeSetting::get('store_phone', '+8809678831374');
+        $whatsappNumber = ThemeSetting::get('whatsapp_number', '+8801947521688');
         $waTemplate = ThemeSetting::get('ai_wa_template', "আসসালামু আলাইকুম {customer_name} ভাই! NEXUS DOKAN থেকে আপনার অর্ডারটি কনফার্ম করতে 'হ্যাঁ' লিখে রিপ্লাই দিন।");
+
+        // WhatsApp Device Linker Status
+        $waDevice = WhatsAppDeviceGatewayService::getStatus();
 
         // Sample Products for 1-Click Marketing Copy Tool
         $sampleProducts = Product::latest()->take(15)->get();
@@ -62,7 +67,9 @@ class AdminAiAutomationController extends Controller
             'autoDiscountLimit',
             'autoDispatchStatus',
             'storePhone',
-            'waTemplate'
+            'whatsappNumber',
+            'waTemplate',
+            'waDevice'
         ));
     }
 
@@ -80,6 +87,7 @@ class AdminAiAutomationController extends Controller
             'ai_auto_dispatch_courier' => 'nullable|string',
             'store_phone' => 'nullable|string|max:50',
             'whatsapp_number' => 'nullable|string|max:50',
+            'wa_auto_ai_pilot' => 'nullable|string',
         ]);
 
         foreach ($validated as $key => $value) {
@@ -90,7 +98,38 @@ class AdminAiAutomationController extends Controller
             ThemeSetting::set('whatsapp_number', $validated['whatsapp_number']);
         }
 
-        return back()->with('success', '⚡ এআই অ্যাসিস্ট্যান্ট ও সেটিংস সফলভাবে আপডেট হয়েছে!');
+        return back()->with('success', '⚡ এআই অ্যাসিস্ট্যান্ট ও WhatsApp গেটওয়ে সেটিংস সফলভাবে আপডেট হয়েছে!');
+    }
+
+    /**
+     * Pair WhatsApp Device
+     */
+    public function pairWhatsAppDevice(Request $request)
+    {
+        $phone = $request->input('phone', '01947521688');
+        $result = WhatsAppDeviceGatewayService::pairDevice($phone);
+        return response()->json($result);
+    }
+
+    /**
+     * Disconnect WhatsApp Device
+     */
+    public function disconnectWhatsAppDevice()
+    {
+        $result = WhatsAppDeviceGatewayService::disconnectDevice();
+        return response()->json($result);
+    }
+
+    /**
+     * Send direct test WhatsApp message from connected device
+     */
+    public function sendTestWhatsAppMessage(Request $request)
+    {
+        $phone = $request->input('phone', '01947521688');
+        $message = $request->input('message', '🎉 আসসালামু আলাইকুম! এটি NEXUS DOKAN এর স্বয়ংক্রিয় এআই WhatsApp টেস্ট মেসেজ।');
+
+        $result = WhatsAppDeviceGatewayService::sendMessage($phone, $message);
+        return response()->json($result);
     }
 
     /**

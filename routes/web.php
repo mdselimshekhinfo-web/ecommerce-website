@@ -215,6 +215,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/ai-automation/{id}/simulate-voice', [AdminAiAutomationController::class, 'simulateVoiceCall'])->name('ai_automation.simulate_voice');
     Route::post('/ai-automation/generate-marketing-copy', [AdminAiAutomationController::class, 'generateMarketingCopy'])->name('ai_automation.generate_marketing_copy');
     Route::get('/ai-automation/fraud-score/{orderId}', [AdminAiAutomationController::class, 'checkFraudScore'])->name('ai_automation.fraud_score');
+    Route::post('/ai-automation/pair-whatsapp', [AdminAiAutomationController::class, 'pairWhatsAppDevice'])->name('ai_automation.pair_whatsapp');
+    Route::post('/ai-automation/disconnect-whatsapp', [AdminAiAutomationController::class, 'disconnectWhatsAppDevice'])->name('ai_automation.disconnect_whatsapp');
+    Route::post('/ai-automation/send-test-whatsapp', [AdminAiAutomationController::class, 'sendTestWhatsAppMessage'])->name('ai_automation.send_test_whatsapp');
 });
 
 // Dynamic XML Sitemap for Google
