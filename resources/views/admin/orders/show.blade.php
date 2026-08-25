@@ -162,6 +162,17 @@
                     <span class="text-[10px] font-mono text-purple-300 font-bold">Caller: {{ \App\Models\ThemeSetting::get('bd_ip_number', '+8809678831374') }}</span>
                 </div>
 
+                @php
+                    $rawPhone = preg_replace('/[^0-9]/', '', $order->customer_phone);
+                    if (str_starts_with($rawPhone, '8801')) {
+                        $waPhone = $rawPhone;
+                    } elseif (str_starts_with($rawPhone, '01')) {
+                        $waPhone = '88' . $rawPhone;
+                    } else {
+                        $waPhone = '880' . $rawPhone;
+                    }
+                @endphp
+
                 <div class="grid grid-cols-2 gap-2">
                     <button type="button" @click="
                         navigator.clipboard.writeText('{{ $order->customer_phone }}');
@@ -172,8 +183,8 @@
                         <span>Dial App এ কল 📞</span>
                     </button>
 
-                    <a href="https://wa.me/88{{ preg_replace('/[^0-9]/', '', $order->customer_phone) }}" target="_blank"
-                       class="py-2.5 px-3 rounded-xl bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 font-bold text-[11px] flex items-center justify-center space-x-1.5 transition-all text-center">
+                    <a href="https://api.whatsapp.com/send?phone={{ $waPhone }}" target="_blank"
+                       class="py-2.5 px-3 rounded-xl bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 font-bold text-[11px] flex items-center justify-center space-x-1.5 transition-all text-center" title="WhatsApp চ্যাট ও কল খুলুন">
                         <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
                         <span>WhatsApp কল</span>
                     </a>

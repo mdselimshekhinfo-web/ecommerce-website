@@ -472,9 +472,14 @@
                                 navigator.clipboard.writeText(dialPhone);
                                 alert('📞 ফোন নম্বর (' + dialPhone + ') কপি করা হয়েছে!\nআপনার Dial App বা ফোনে পেস্ট করে কল করুন।');
                                 window.location.href = 'tel:' + dialPhone;
-                            " class="p-2.5 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center" title="Alaap / ডায়ালারে সরাসরি কল ওপেন করুন">
+                            " class="p-2.5 rounded-xl bg-purple-600/30 text-purple-300 border border-purple-500/40 hover:bg-purple-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center" title="Dial App বা ফোনে সরাসরি কল">
                                 <i data-lucide="external-link" class="w-4 h-4"></i>
                             </button>
+
+                            <a :href="'https://api.whatsapp.com/send?phone=88' + dialPhone.replace(/^88/, '').replace(/^0+/, '')" target="_blank"
+                               class="p-2.5 rounded-xl bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center" title="WhatsApp এ চ্যাট ও অডিও কল খুলুন">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            </a>
                         </div>
                         <p class="text-[10px] text-slate-500">কলার আইডি: <b class="text-purple-300 font-mono">{{ $bdIpNumber ?: '+8809678831374' }} (Dial / BD IP TSP)</b></p>
                     </div>
