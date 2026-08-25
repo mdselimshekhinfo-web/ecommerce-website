@@ -144,7 +144,7 @@
             @else
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($products as $product)
-                        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between relative group">
+                        <div class="glass-card rounded-2xl p-4 flex flex-col justify-between relative group" x-data="{ adding: false, added: false, wishlisted: false }">
                             
                             <!-- Badges -->
                             <div class="absolute top-3 left-3 z-10 flex flex-col space-y-1">
@@ -158,13 +158,43 @@
                                         -{{ $product->discount_percent }}% OFF
                                     </span>
                                 @endif
+                                @if($product->stock_quantity <= 0)
+                                    <span class="px-2 py-0.5 rounded-md bg-red-600/80 text-white font-mono text-[9px] font-bold uppercase">
+                                        Out of Stock
+                                    </span>
+                                @endif
                             </div>
+
+                            <!-- Wishlist Heart Button (top-right) -->
+                            <button @click.prevent="
+                                wishlisted = !wishlisted;
+                                @auth
+                                fetch('{{ route('customer.wishlist.toggle') }}', {
+                                    method: 'POST',
+                                    headers: {'Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]').content},
+                                    body: JSON.stringify({product_id: {{ $product->id }}})
+                                });
+                                @else
+                                window.location.href='{{ route('login') }}';
+                                @endauth
+                            "
+                            class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-slate-950/80 border border-slate-700/60 hover:border-pink-400 flex items-center justify-center transition-all hover:scale-110 backdrop-blur-sm"
+                            :class="wishlisted ? 'border-pink-500 bg-pink-950/60' : ''">
+                                <i data-lucide="heart" class="w-4 h-4 transition-colors"
+                                   :class="wishlisted ? 'text-pink-400 fill-pink-400' : 'text-slate-400'"></i>
+                            </button>
 
                             <!-- Product Visual -->
                             <div class="relative overflow-hidden rounded-xl bg-slate-900 mb-3">
                                 <a href="{{ route('product.show', $product->slug) }}">
-                                    <img src="{{ $product->thumbnail }}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <img src="{{ $product->thumbnail }}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                                         @if($product->stock_quantity <= 0) style="filter: grayscale(0.5) brightness(0.7)" @endif>
                                 </a>
+                                @if($product->stock_quantity <= 0)
+                                    <div class="absolute inset-0 flex items-center justify-center bg-slate-950/60 rounded-xl">
+                                        <span class="px-3 py-1.5 rounded-full bg-red-600/90 text-white text-[10px] font-bold font-mono uppercase tracking-wider">Sold Out</span>
+                                    </div>
+                                @endif
                             </div>
 
                             <!-- Details -->
@@ -198,18 +228,64 @@
                             </div>
 
                             <!-- Quick Action Button -->
-                            <form action="{{ route('cart.add') }}" method="POST" class="mt-4" @submit.prevent="quickAddToCart($event)">
+                            @if($product->stock_quantity > 0)
+                            <form action="{{ route('cart.add') }}" method="POST" class="mt-4" @submit.prevent="
+                                adding = true;
+                                const form = $el;
+                                const formData = new FormData(form);
+                                fetch(form.action, {
+                                    method: 'POST', body: formData,
+                                    headers: {'X-Requested-With':'XMLHttpRequest'}
+                                })
+                                .then(r => r.json())
+                                .then(data => {
+                                    adding = false;
+                                    if (data.success) {
+                                        added = true;
+                                        setTimeout(() => added = false, 2000);
+                                        const app = Alpine.$data(document.querySelector('[x-data]'));
+                                        if (app && app.openCartDrawer) app.openCartDrawer();
+                                    }
+                                })
+                                .catch(() => { adding = false; });
+                            ">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 border border-cyan-500/30 hover:border-cyan-400 text-xs font-bold text-cyan-300 hover:text-white hover:bg-cyan-500/20 transition-all flex items-center justify-center space-x-1.5">
-                                    <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
-                                    <span>Add to Cart</span>
+                                <button type="submit"
+                                        :disabled="adding"
+                                        class="w-full py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5"
+                                        :class="added ? 'bg-emerald-500/20 border border-emerald-400 text-emerald-300' : 'bg-slate-900 border border-cyan-500/30 hover:border-cyan-400 text-cyan-300 hover:text-white hover:bg-cyan-500/20'">
+                                    <template x-if="!adding && !added">
+                                        <span class="flex items-center space-x-1.5">
+                                            <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                                            <span>Add to Cart</span>
+                                        </span>
+                                    </template>
+                                    <template x-if="adding">
+                                        <span class="flex items-center space-x-1.5">
+                                            <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i>
+                                            <span>Adding...</span>
+                                        </span>
+                                    </template>
+                                    <template x-if="added">
+                                        <span class="flex items-center space-x-1.5">
+                                            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                            <span>Added! ✓</span>
+                                        </span>
+                                    </template>
                                 </button>
                             </form>
+                            @else
+                            <a href="{{ route('product.show', $product->slug) }}" class="mt-4 w-full py-2.5 rounded-xl text-xs font-bold bg-slate-900/60 border border-slate-700 text-slate-500 flex items-center justify-center space-x-1.5 cursor-not-allowed">
+                                <i data-lucide="bell" class="w-3.5 h-3.5"></i>
+                                <span>Notify Me</span>
+                            </a>
+                            @endif
 
                         </div>
                     @endforeach
                 </div>
+
 
                 <!-- Custom Styled Pagination -->
                 <div class="pt-6">

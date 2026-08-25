@@ -215,6 +215,40 @@
                     <a href="{{ route('shop.index') }}" class="px-4 py-2 rounded-lg text-slate-300 hover:text-cyan-400 hover:bg-white/5 transition-all {{ request()->routeIs('shop.index') && !request('flash_deals') ? 'text-cyan-400 bg-cyan-500/10 font-semibold' : '' }}">
                         <span>{{ \App\Helpers\LocalizationHelper::get('nav_shop') }}</span>
                     </a>
+
+                    <!-- Categories Megamenu Dropdown -->
+                    @php $navCategories = \App\Models\Category::where('status','active')->orderBy('name')->take(10)->get(); @endphp
+                    <div class="relative" x-data="{ catOpen: false }" @mouseenter="catOpen=true" @mouseleave="catOpen=false">
+                        <button class="flex items-center space-x-1 px-4 py-2 rounded-lg text-slate-300 hover:text-cyan-400 hover:bg-white/5 transition-all">
+                            <span>{{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'ক্যাটাগরি' : 'Categories' }}</span>
+                            <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="catOpen ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="catOpen" x-cloak x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                             class="absolute left-0 top-full mt-1 w-64 bg-slate-900/98 border border-cyan-500/20 rounded-2xl shadow-2xl p-3 z-50 backdrop-blur-xl">
+                            <div class="space-y-0.5">
+                                <a href="{{ route('shop.index') }}" class="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all font-medium">
+                                    <i data-lucide="grid" class="w-3.5 h-3.5 text-cyan-400"></i>
+                                    <span>{{ \App\Helpers\LocalizationHelper::getLocale() === 'bn' ? 'সব পণ্য' : 'All Products' }}</span>
+                                </a>
+                                @foreach($navCategories as $nc)
+                                <a href="{{ route('shop.index', ['category' => $nc->slug]) }}" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-slate-400 hover:text-cyan-300 hover:bg-cyan-500/8 transition-all">
+                                    <span class="flex items-center space-x-2.5">
+                                        <i data-lucide="tag" class="w-3.5 h-3.5 text-slate-600"></i>
+                                        <span>{{ $nc->name }}</span>
+                                    </span>
+                                    <span class="text-[10px] font-mono bg-slate-800 px-1.5 py-0.5 rounded text-slate-500">{{ $nc->products_count ?? '' }}</span>
+                                </a>
+                                @endforeach
+                            </div>
+                            <div class="mt-2 pt-2 border-t border-slate-800">
+                                <a href="{{ route('shop.index', ['flash_deals' => 1]) }}" class="flex items-center space-x-2 px-3 py-2 rounded-xl text-xs text-pink-400 hover:bg-pink-500/10 font-semibold transition-all">
+                                    <i data-lucide="flame" class="w-3.5 h-3.5 animate-pulse"></i>
+                                    <span>Flash Deals</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     <a href="{{ route('shop.index', ['flash_deals' => 1]) }}" class="px-4 py-2 rounded-lg text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 transition-all flex items-center space-x-1.5 {{ request('flash_deals') ? 'bg-pink-500/10 font-semibold' : '' }}">
                         <i data-lucide="flame" class="w-4 h-4 text-pink-400 animate-bounce"></i>
                         <span>{{ \App\Helpers\LocalizationHelper::get('nav_deals') }}</span>
@@ -336,8 +370,52 @@
         </div>
     </header>
 
+    <!-- 📱 Mobile Bottom Navigation Bar (Only on mobile/tablet) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-slate-950/95 border-t border-slate-800 backdrop-blur-xl">
+        <div class="flex items-center justify-around px-1 py-2">
+            <a href="{{ route('home') }}" class="flex flex-col items-center space-y-1 px-3 py-1 rounded-xl {{ request()->routeIs('home') ? 'text-cyan-400' : 'text-slate-500' }} hover:text-cyan-400 transition-colors">
+                <i data-lucide="home" class="w-5 h-5"></i>
+                <span class="text-[9px] font-bold uppercase">Home</span>
+            </a>
+            <a href="{{ route('shop.index') }}" class="flex flex-col items-center space-y-1 px-3 py-1 rounded-xl {{ request()->routeIs('shop.*') ? 'text-cyan-400' : 'text-slate-500' }} hover:text-cyan-400 transition-colors">
+                <i data-lucide="grid-3x3" class="w-5 h-5"></i>
+                <span class="text-[9px] font-bold uppercase">Shop</span>
+            </a>
+            <button @click="openCartDrawer()" class="relative flex flex-col items-center space-y-1 px-3 py-1 rounded-xl text-slate-500 hover:text-cyan-400 transition-colors">
+                <span class="relative">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <span x-show="cartCount > 0" x-text="cartCount"
+                          class="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-cyan-400 text-slate-950 font-black text-[9px] flex items-center justify-center animate-pulse"></span>
+                </span>
+                <span class="text-[9px] font-bold uppercase">Cart</span>
+            </button>
+            <a href="{{ route('order.track') }}" class="flex flex-col items-center space-y-1 px-3 py-1 rounded-xl {{ request()->routeIs('order.track') ? 'text-pink-400' : 'text-slate-500' }} hover:text-pink-400 transition-colors">
+                <i data-lucide="package-search" class="w-5 h-5"></i>
+                <span class="text-[9px] font-bold uppercase">Track</span>
+            </a>
+            @auth
+            <a href="{{ route('customer.dashboard') }}" class="flex flex-col items-center space-y-1 px-3 py-1 rounded-xl {{ request()->routeIs('customer.*') ? 'text-emerald-400' : 'text-slate-500' }} hover:text-emerald-400 transition-colors">
+                <i data-lucide="user-circle" class="w-5 h-5"></i>
+                <span class="text-[9px] font-bold uppercase">Account</span>
+            </a>
+            @else
+            <a href="{{ route('login') }}" class="flex flex-col items-center space-y-1 px-3 py-1 rounded-xl text-slate-500 hover:text-cyan-400 transition-colors">
+                <i data-lucide="log-in" class="w-5 h-5"></i>
+                <span class="text-[9px] font-bold uppercase">Login</span>
+            </a>
+            @endauth
+        </div>
+    </nav>
+
+    <!-- 🔼 Scroll To Top Button -->
+    <button x-show="showScrollTop" x-cloak @click="window.scrollTo({top:0,behavior:'smooth'})"
+            class="fixed bottom-20 right-5 md:bottom-8 z-40 w-11 h-11 rounded-full bg-slate-900 border border-slate-700 hover:border-cyan-400 text-slate-400 hover:text-cyan-300 shadow-lg transition-all hover:scale-110 flex items-center justify-center"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-90" x-transition:enter-end="opacity-100 scale-100">
+        <i data-lucide="chevron-up" class="w-5 h-5"></i>
+    </button>
+
     <!-- Main Content -->
-    <main class="flex-1 relative z-10">
+    <main class="flex-1 relative z-10 pb-16 md:pb-0">
         @if(session('success'))
             <div class="max-w-4xl mx-auto px-4 mt-4">
                 <div class="p-4 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-sm flex items-center justify-between shadow-neon-green">
@@ -830,9 +908,13 @@
                 spinWon: false,
                 spinMessage: '',
                 spinCoupon: '',
+                showScrollTop: false,
 
                 initApp() {
                     this.refreshIcons();
+                    window.addEventListener('scroll', () => {
+                        this.showScrollTop = window.scrollY > 350;
+                    });
                 },
 
                 toggleLang() {

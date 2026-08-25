@@ -93,4 +93,18 @@ class AuthController extends Controller
 
         return redirect()->route('login');
     }
+
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        // For demo purposes — show a friendly success message
+        // In production this would send a real email via Password Broker
+        return back()->with('status', 'একটি পাসওয়ার্ড রিসেট লিঙ্ক আপনার ইমেইলে পাঠানো হয়েছে। (ডেমো: প্রোডাকশনে রিয়েল ইমেইল পাঠাবে)');
+    }
 }

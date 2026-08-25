@@ -307,15 +307,68 @@
     <!-- Related Products -->
     @if($relatedProducts->isNotEmpty())
         <div class="mt-16">
-            <h3 class="font-cyber font-bold text-xl text-white mb-6">SIMILAR CYBER GEAR</h3>
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-cyber font-bold text-xl text-white flex items-center space-x-2">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-cyan-400"></i>
+                    <span>SIMILAR CYBER GEAR</span>
+                </h3>
+                <a href="{{ route('shop.index', ['category' => $product->category->slug]) }}" class="text-xs text-cyan-400 hover:text-cyan-300 font-semibold flex items-center space-x-1 hover:underline">
+                    <span>View All in {{ $product->category->name }}</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach($relatedProducts as $rel)
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
-                        <a href="{{ route('product.show', $rel->slug) }}">
-                            <img src="{{ $rel->thumbnail }}" class="w-full h-44 object-cover rounded-xl mb-3">
-                            <h4 class="font-semibold text-xs text-white truncate">{{ $rel->name }}</h4>
-                            <span class="font-mono font-bold text-sm text-cyan-300 mt-1 block">{{ \App\Helpers\BanglaHelper::formatTaka($rel->effective_price) }}</span>
+                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-between relative group" x-data="{ adding: false, added: false }">
+                        <!-- Discount Badge -->
+                        @if($rel->discount_percent > 0)
+                            <span class="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-md bg-pink-600 text-white font-mono text-[9px] font-bold uppercase">
+                                -{{ $rel->discount_percent }}% OFF
+                            </span>
+                        @endif
+                        @if($rel->stock_quantity <= 0)
+                            <span class="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-md bg-red-600/80 text-white font-mono text-[9px] font-bold uppercase">
+                                Sold Out
+                            </span>
+                        @endif
+                        <a href="{{ route('product.show', $rel->slug) }}" class="block">
+                            <img src="{{ $rel->thumbnail }}" class="w-full h-44 object-cover rounded-xl mb-3 group-hover:scale-105 transition-transform duration-500"
+                                 @if($rel->stock_quantity <= 0) style="filter: grayscale(0.5) brightness(0.7)" @endif>
+                            <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-1">
+                                <span>{{ $rel->category->name }}</span>
+                                <span class="text-amber-400">★ {{ $rel->rating }}</span>
+                            </div>
+                            <h4 class="font-semibold text-xs text-white truncate group-hover:text-cyan-300 transition-colors">{{ $rel->name }}</h4>
+                            <div class="flex items-center space-x-2 mt-1.5">
+                                <span class="font-mono font-bold text-sm text-cyan-300">{{ \App\Helpers\BanglaHelper::formatTaka($rel->effective_price) }}</span>
+                                @if($rel->sale_price)
+                                    <span class="font-mono text-xs text-slate-500 line-through">{{ \App\Helpers\BanglaHelper::formatTaka($rel->price) }}</span>
+                                @endif
+                            </div>
                         </a>
+                        @if($rel->stock_quantity > 0)
+                        <form action="{{ route('cart.add') }}" method="POST" class="mt-3" @submit.prevent="
+                            adding = true;
+                            fetch($el.action, { method: 'POST', body: new FormData($el), headers: {'X-Requested-With':'XMLHttpRequest'} })
+                            .then(r => r.json()).then(d => {
+                                adding = false;
+                                if(d.success) { added = true; setTimeout(() => added = false, 2000); const app = Alpine.$data(document.querySelector('[x-data]')); if(app && app.openCartDrawer) app.openCartDrawer(); }
+                            }).catch(() => adding = false);
+                        ">
+                            @csrf
+                            <input type="hidden" name="product_id" value="{{ $rel->id }}">
+                            <button type="submit" :disabled="adding"
+                                    class="w-full py-2 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center space-x-1.5"
+                                    :class="added ? 'bg-emerald-500/20 border border-emerald-400 text-emerald-300' : 'bg-slate-900 border border-slate-700 hover:border-cyan-400 text-slate-400 hover:text-cyan-300'">
+                                <i :data-lucide="added ? 'check' : 'shopping-bag'" class="w-3 h-3"></i>
+                                <span x-text="adding ? 'Adding...' : (added ? 'Added ✓' : 'Add to Cart')">Add to Cart</span>
+                            </button>
+                        </form>
+                        @else
+                        <div class="mt-3 w-full py-2 rounded-xl text-[11px] font-bold bg-slate-900/40 border border-slate-800 text-slate-600 flex items-center justify-center">
+                            Sold Out
+                        </div>
+                        @endif
                     </div>
                 @endforeach
             </div>
