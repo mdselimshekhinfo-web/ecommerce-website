@@ -79,10 +79,15 @@ class AdminAiAutomationController extends Controller
             'ai_wa_template' => 'nullable|string|max:1000',
             'ai_auto_dispatch_courier' => 'nullable|string',
             'store_phone' => 'nullable|string|max:50',
+            'whatsapp_number' => 'nullable|string|max:50',
         ]);
 
         foreach ($validated as $key => $value) {
             ThemeSetting::set($key, $value ?? '');
+        }
+
+        if (!empty($validated['whatsapp_number'])) {
+            ThemeSetting::set('whatsapp_number', $validated['whatsapp_number']);
         }
 
         return back()->with('success', '⚡ এআই অ্যাসিস্ট্যান্ট ও সেটিংস সফলভাবে আপডেট হয়েছে!');

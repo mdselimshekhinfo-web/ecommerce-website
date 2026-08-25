@@ -127,10 +127,17 @@
                     </div>
                 </div>
 
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-slate-300">হটলাইন / কল নম্বর</label>
-                    <input type="text" name="store_phone" value="{{ $storePhone }}" placeholder="+8809678831374"
-                           class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-300">হটলাইন / কল নম্বর</label>
+                        <input type="text" name="store_phone" value="{{ $storePhone }}" placeholder="+8809678831374"
+                               class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400 font-mono">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-300">WhatsApp নম্বর (ওয়েবসাইট চ্যাট)</label>
+                        <input type="text" name="whatsapp_number" value="{{ \App\Models\ThemeSetting::get('whatsapp_number', '+8801947521688') }}" placeholder="+8801947521688"
+                               class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-emerald-300 focus:outline-none focus:border-emerald-400 font-mono">
+                    </div>
                 </div>
 
                 <div class="pt-2">

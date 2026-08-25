@@ -750,6 +750,24 @@
 
     <!-- 6. Floating Enterprise AI & Live Support Assistant Widget -->
     @if($enableAiAssistant)
+    <!-- Floating Direct WhatsApp Messenger Button -->
+    @php
+        $rawWa = preg_replace('/[^0-9]/', '', $whatsapp ?: '01947521688');
+        if (strlen($rawWa) === 11 && str_starts_with($rawWa, '01')) {
+            $rawWa = '88' . $rawWa;
+        }
+    @endphp
+    <a href="https://api.whatsapp.com/send?phone={{ $rawWa }}&text={{ rawurlencode('আসসালামু আলাইকুম, আমি আপনার ওয়েবসাইট থেকে পণ্য সম্পর্কে জানতে চাই।') }}" 
+       target="_blank" 
+       class="fixed bottom-6 right-24 z-40 w-14 h-14 rounded-2xl bg-emerald-500 hover:bg-emerald-400 p-0.5 shadow-lg shadow-emerald-500/30 hover:scale-105 transition-all flex items-center justify-center group select-none"
+       title="WhatsApp এ সরাসরি চ্যাট করুন">
+        <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-emerald-400 group-hover:text-emerald-300 transition-colors relative">
+            <i data-lucide="message-circle" class="w-7 h-7"></i>
+            <span class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-900 animate-ping"></span>
+            <span class="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-900"></span>
+        </div>
+    </a>
+
     <div x-data="aiAssistant()" class="fixed bottom-6 right-6 z-40 select-none">
         <button @click="toggleChat()" class="relative group w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-pink-500 p-0.5 shadow-neon-cyan hover:scale-105 transition-all">
             <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
