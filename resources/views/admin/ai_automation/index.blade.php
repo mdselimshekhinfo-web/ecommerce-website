@@ -127,7 +127,7 @@
                     class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0"
                     :class="activeTab === 'voice' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-900'">
                 <i data-lucide="phone-call" class="w-4 h-4"></i>
-                <span>৩. বাংলা ভয়েস কলিং ও টেলিকম গেটওয়ে</span>
+                <span>৩. বাংলা ভয়েস কলিং ও ডায়ালার</span>
             </button>
 
             <button type="button" @click="activeTab = 'seo'" 
@@ -135,6 +135,13 @@
                     :class="activeTab === 'seo' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-900'">
                 <i data-lucide="search" class="w-4 h-4"></i>
                 <span>৪. গুগল অটো-এসইও ও সাইটম্যাপ</span>
+            </button>
+
+            <button type="button" @click="activeTab = 'marketing'" 
+                    class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shrink-0"
+                    :class="activeTab === 'marketing' ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40 shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-900'">
+                <i data-lucide="sparkles" class="w-4 h-4 text-pink-400"></i>
+                <span>৫. 📢 AI সোশ্যাল অ্যাড ও মার্কেটিং কপি</span>
             </button>
         </div>
 
@@ -635,6 +642,103 @@
 
         </div>
 
+        <!-- ================================================================= -->
+        <!-- TAB 5: AI সোশ্যাল অ্যাড ও মার্কেটিং কপি জেনারেটর -->
+        <!-- ================================================================= -->
+        <div x-show="activeTab === 'marketing'" x-cloak class="space-y-6">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left: Product & Tone Selector (4 Cols) -->
+                <div class="lg:col-span-4 p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+                    <div class="flex items-center space-x-2 text-pink-400 border-b border-slate-800 pb-3">
+                        <i data-lucide="sparkles" class="w-5 h-5"></i>
+                        <h4 class="font-cyber font-bold text-sm text-white">AI অ্যাড ও কপি জেনারেটর</h4>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-300">প্রোডাক্ট নির্বাচন করুন</label>
+                        <select x-model="selectedProductId" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-pink-400">
+                            @foreach($sampleProducts as $sp)
+                                <option value="{{ $sp->id }}">{{ $sp->name }} ({{ \App\Helpers\BanglaHelper::formatTaka($sp->final_price) }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-slate-300">বিজ্ঞাপনের টোন ও ভঙ্গি</label>
+                        <select x-model="adTone" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-pink-400">
+                            <option value="sales_boost">🔥 হাই-কনভার্টিং সেলস ধামাকা (উচ্চ বিক্রি)</option>
+                            <option value="premium">💎 প্রিমিয়াম ও লাক্সারি লাইফস্টাইল</option>
+                            <option value="urgency">⚡ সীমিত স্টক ও ফ্ল্যাশ ডিল আরজেন্সি</option>
+                        </select>
+                    </div>
+
+                    <button type="button" @click="generateAdCopy()" 
+                            :disabled="generatingAd"
+                            class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 hover:from-pink-400 hover:to-indigo-500 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 shadow-lg disabled:opacity-50 transition-all">
+                        <i data-lucide="wand-2" class="w-4 h-4"></i>
+                        <span x-text="generatingAd ? 'এআই কপি জেনারেট হচ্ছে...' : '⚡ ১-ক্লিকে AI অ্যাড কপি তৈরি করুন'"></span>
+                    </button>
+                </div>
+
+                <!-- Right: High-Converting Ad Post Cards (8 Cols) -->
+                <div class="lg:col-span-8 space-y-4">
+                    
+                    <!-- 1. Facebook Ad Copy Card -->
+                    <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                            <span class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
+                                <i data-lucide="facebook" class="w-4 h-4"></i>
+                                <span>Facebook হাই-কনভার্টিং অ্যাড পোস্ট</span>
+                            </span>
+                            <button type="button" @click="copyText(marketingData.facebook_ad_copy, 'Facebook অ্যাড কপি কপি হয়েছে!')"
+                                    class="px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-500 hover:text-white text-[11px] font-mono font-bold transition-all flex items-center space-x-1">
+                                <i data-lucide="copy" class="w-3 h-3"></i>
+                                <span>কপি করুন</span>
+                            </button>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-200 whitespace-pre-line font-sans leading-relaxed" x-text="marketingData.facebook_ad_copy"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- 2. Instagram Caption Card -->
+                        <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <span class="text-xs font-bold text-pink-400 flex items-center gap-1.5">
+                                    <i data-lucide="instagram" class="w-3.5 h-3.5"></i>
+                                    <span>Instagram ক্যাপশন ও হ্যাশট্যাগ</span>
+                                </span>
+                                <button type="button" @click="copyText(marketingData.instagram_caption, 'Instagram ক্যাপশন কপি হয়েছে!')"
+                                        class="px-2.5 py-0.5 rounded-lg bg-pink-500/10 text-pink-400 text-[10px] font-mono font-bold hover:bg-pink-500 hover:text-white transition-all">
+                                    কপি
+                                </button>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 whitespace-pre-line font-sans" x-text="marketingData.instagram_caption"></div>
+                        </div>
+
+                        <!-- 3. SMS / WhatsApp Broadcast Card -->
+                        <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                                    <span>SMS / WhatsApp ব্রডকাস্ট</span>
+                                </span>
+                                <button type="button" @click="copyText(marketingData.sms_marketing_copy, 'SMS ব্রডকাস্ট কপি হয়েছে!')"
+                                        class="px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px] font-mono font-bold hover:bg-emerald-500 hover:text-white transition-all">
+                                    কপি
+                                </button>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-[11px] text-slate-300 whitespace-pre-line font-sans" x-text="marketingData.sms_marketing_copy"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
@@ -652,6 +756,43 @@
             callActive: false,
             currentVoiceScript: '',
             voiceResult: null,
+            selectedProductId: '{{ $sampleProducts->first() ? $sampleProducts->first()->id : 1 }}',
+            adTone: 'sales_boost',
+            generatingAd: false,
+            marketingData: {!! json_encode($sampleMarketingCopy ?? [
+                'facebook_ad_copy' => "🔥 সীমিত সময়ের জন্য স্পেশাল অফার! প্রিমিয়াম AuraBlade ANC Pro ইয়ারবাডস এখন সেরা মূল্যে!\n\n✨ একটিভ নয়েজ ক্যান্সেলেশন\n🚀 সারা দেশে দ্রুত হোম ডেলিভারি\n💵 ক্যাশ অন ডেলিভারি সুবিধা\n\n👉 অর্ডার করতে ইনবক্স করুন বা ওয়েবসাইট ভিজিট করুন!\n📞 হটলাইন: +8809678831374",
+                'instagram_caption' => "Upgrade your sound with AuraBlade ANC Pro! 🎧✨\n\n🛍️ Cash on Delivery Available.\n#NexusDokan #EarbudsBD #GadgetsBD",
+                'sms_marketing_copy' => "স্পেশাল অফার! AuraBlade ANC Pro এখন মাত্র ৳২,৯৫০ টাকায়! আজই অর্ডার করুন: https://nexusdokan.bd/product/earbuds-pro"
+            ]) !!},
+
+            copyText(text, msg) {
+                if (!text) return;
+                navigator.clipboard.writeText(text);
+                alert('✓ ' + (msg || 'কপি করা হয়েছে!'));
+            },
+
+            generateAdCopy() {
+                this.generatingAd = true;
+                fetch('{{ route("admin.ai_automation.generate_marketing_copy") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({
+                        product_id: this.selectedProductId,
+                        tone: this.adTone
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.generatingAd = false;
+                    this.marketingData = data;
+                })
+                .catch(() => {
+                    this.generatingAd = false;
+                });
+            },
 
             testWhatsAppReply() {
                 const text = this.waInput.trim();

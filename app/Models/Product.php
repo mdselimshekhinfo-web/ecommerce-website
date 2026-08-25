@@ -87,6 +87,11 @@ class Product extends Model
         return ($this->sale_price && $this->sale_price < $this->price) ? $this->sale_price : $this->price;
     }
 
+    public function getFinalPriceAttribute()
+    {
+        return $this->effective_price;
+    }
+
     public function getDiscountPercentAttribute()
     {
         if ($this->sale_price && $this->sale_price < $this->price) {

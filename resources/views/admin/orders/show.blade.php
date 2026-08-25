@@ -116,6 +116,32 @@
         <!-- Right: Status Control & WhatsApp Verification (4 Cols) -->
         <div class="lg:col-span-4 space-y-6">
             
+            <!-- AI Fraud & Trust Risk Analysis Card -->
+            @php
+                $fraudAnalysis = \App\Services\AiFraudScoreService::analyzeOrder($order);
+            @endphp
+            <div class="admin-glass rounded-3xl p-6 border {{ $fraudAnalysis['level'] === 'safe' ? 'border-emerald-500/40 bg-emerald-950/20' : ($fraudAnalysis['level'] === 'moderate' ? 'border-amber-500/40 bg-amber-950/20' : 'border-red-500/50 bg-red-950/30') }} space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-cyber font-bold text-xs text-white uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="shield-check" class="w-4 h-4 {{ $fraudAnalysis['level'] === 'safe' ? 'text-emerald-400' : ($fraudAnalysis['level'] === 'moderate' ? 'text-amber-400' : 'text-red-400') }}"></i>
+                        <span>AI ফ্রড ও ট্রাস্ট স্কোর</span>
+                    </h3>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-mono font-bold uppercase {{ $fraudAnalysis['level'] === 'safe' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : ($fraudAnalysis['level'] === 'moderate' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-red-500/20 text-red-300 border border-red-500/40') }}">
+                        {{ $fraudAnalysis['score'] }}% Trust
+                    </span>
+                </div>
+
+                <p class="text-xs text-slate-200 font-medium">
+                    <b>পরামর্শ:</b> {{ $fraudAnalysis['recommendation'] }}
+                </p>
+
+                <div class="space-y-1 pt-1 border-t border-slate-800 text-[11px] text-slate-300 font-mono">
+                    @foreach($fraudAnalysis['reasons'] as $reason)
+                        <p>{{ $reason }}</p>
+                    @endforeach
+                </div>
+            </div>
+
             <!-- WhatsApp Verification & Auto-Courier Card -->
             <div class="admin-glass rounded-3xl p-6 border {{ $order->verification_status === 'whatsapp_verified' ? 'border-emerald-500/40 bg-emerald-950/20' : 'border-purple-500/30' }} space-y-4">
                 <div class="flex items-center justify-between">

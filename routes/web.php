@@ -206,13 +206,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::post('/live-chat/toggle-agent-status', [AdminLiveChatController::class, 'toggleAgentStatus'])->name('live_chat.toggle_agent_status');
     Route::post('/live-chat/{sessionId}/close', [AdminLiveChatController::class, 'closeSession'])->name('live_chat.close');
 
-    // Enterprise AI Automation Command Hub (Auto-SEO, WhatsApp Verification & Voice Calling Agent)
+    // Enterprise AI Automation Command Hub (Auto-SEO, WhatsApp Verification, Voice Calling & AI Marketing)
     Route::get('/ai-automation', [AdminAiAutomationController::class, 'index'])->name('ai_automation.index');
     Route::post('/ai-automation/save-settings', [AdminAiAutomationController::class, 'saveSettings'])->name('ai_automation.save_settings');
     Route::post('/ai-automation/generate-seo', [AdminAiAutomationController::class, 'generateAllSeo'])->name('ai_automation.generate_seo');
     Route::post('/ai-automation/simulate-whatsapp', [AdminAiAutomationController::class, 'simulateWhatsAppReply'])->name('ai_automation.simulate_whatsapp');
     Route::post('/ai-automation/dial-voice', [AdminAiAutomationController::class, 'dialVoiceCall'])->name('ai_automation.dial_voice');
     Route::post('/ai-automation/{id}/simulate-voice', [AdminAiAutomationController::class, 'simulateVoiceCall'])->name('ai_automation.simulate_voice');
+    Route::post('/ai-automation/generate-marketing-copy', [AdminAiAutomationController::class, 'generateMarketingCopy'])->name('ai_automation.generate_marketing_copy');
+    Route::get('/ai-automation/fraud-score/{orderId}', [AdminAiAutomationController::class, 'checkFraudScore'])->name('ai_automation.fraud_score');
 });
 
 // Dynamic XML Sitemap for Google

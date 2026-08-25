@@ -56,12 +56,21 @@ class AdminAiAutomationController extends Controller
         $autoVoiceCallStatus = ThemeSetting::get('ai_auto_voice_call', '1');
         $autoWhatsAppStatus = ThemeSetting::get('ai_auto_whatsapp_verify', '1');
 
+        $sampleProducts = Product::latest()->take(15)->get();
+        $sampleProduct = $sampleProducts->first();
+        $sampleMarketingCopy = $sampleProduct ? \App\Services\AiMarketingCopyService::generateAdCopy($sampleProduct) : null;
+        $sampleFraudOrder = $recentOrders->first();
+        $sampleFraudScore = $sampleFraudOrder ? \App\Services\AiFraudScoreService::analyzeOrder($sampleFraudOrder) : null;
+
         return view('admin.ai_automation.index', compact(
             'productsCount',
             'seoOptimizedCount',
             'totalOrders',
             'verifiedOrdersCount',
             'recentOrders',
+            'sampleProducts',
+            'sampleMarketingCopy',
+            'sampleFraudScore',
             'aiConversationsCount',
             'aiOrdersCount',
             'aiRevenue',
@@ -84,6 +93,32 @@ class AdminAiAutomationController extends Controller
             'autoVoiceCallStatus',
             'autoWhatsAppStatus'
         ));
+    }
+
+    /**
+     * Generate AI Marketing Ad Copy for a specific product
+     */
+    public function generateMarketingCopy(Request $request)
+    {
+        $productId = $request->input('product_id');
+        $product = Product::find($productId) ?? Product::first();
+
+        if (!$product) {
+            return response()->json(['error' => 'No product found'], 404);
+        }
+
+        $adCopy = \App\Services\AiMarketingCopyService::generateAdCopy($product);
+        return response()->json($adCopy);
+    }
+
+    /**
+     * Check AI Fraud Score for a specific order
+     */
+    public function checkFraudScore($orderId)
+    {
+        $order = Order::findOrFail($orderId);
+        $result = \App\Services\AiFraudScoreService::analyzeOrder($order);
+        return response()->json($result);
     }
 
     /**
