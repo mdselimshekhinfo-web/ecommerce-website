@@ -445,73 +445,108 @@
                     </form>
                 </div>
 
-                <!-- Right: Live Audio Dispatcher & Dialer (6 Cols) -->
+                <!-- Right: Interactive In-Browser Softphone & Virtual Keypad (6 Cols) -->
                 <div class="lg:col-span-6 p-6 rounded-2xl bg-slate-950 border border-purple-500/30 space-y-4">
                     <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-                        <h4 class="font-cyber font-bold text-xs text-purple-400 uppercase tracking-wider">
-                            লাইভ বাংলা ভয়েস কল ডায়ালার ও টেস্ট
-                        </h4>
-                        <span class="text-[10px] font-mono text-emerald-400">096 IP TSP Enabled</span>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                            <h4 class="font-cyber font-bold text-xs text-purple-300 uppercase tracking-wider">
+                                ভার্চুয়াল ওয়েব ডায়ালার ও লাইভ ভয়েস স্টেশন
+                            </h4>
+                        </div>
+                        <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">WebRTC Softphone</span>
                     </div>
 
-                    <!-- Direct Dialer -->
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-white block">যেকোনো ফোন নম্বরে এখনই টেস্ট কল করুন:</label>
+                    <!-- Recent Orders Quick-Picker -->
+                    <div class="space-y-1.5">
+                        <label class="text-[11px] font-bold text-slate-300">সাম্প্রতিক অর্ডার থেকে কাস্টমার সিলেক্ট করুন:</label>
+                        <select @change="dialPhone = $event.target.value" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-purple-300 focus:outline-none focus:border-purple-400 font-mono">
+                            <option value="01947521688">01947521688 (তানভীর আহমেদ - ৳৩,০১০)</option>
+                            @foreach($recentOrders as $ro)
+                                <option value="{{ $ro->customer_phone }}">{{ $ro->customer_phone }} ({{ $ro->customer_name }} - {{ \App\Helpers\BanglaHelper::formatTaka($ro->total_amount) }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Phone Number Display Screen -->
+                    <div class="p-3.5 rounded-2xl bg-slate-900 border border-purple-500/40 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-slate-500 uppercase">CALLING TO:</span>
+                            <span class="text-[10px] font-mono text-purple-400">Caller: {{ $bdIpNumber ?: '+8809678831374' }}</span>
+                        </div>
                         <div class="flex items-center space-x-2">
                             <input type="text" x-model="dialPhone" placeholder="019XXXXXXXX"
-                                   class="flex-1 bg-slate-900 border border-purple-500/40 rounded-xl px-3.5 py-2.5 text-xs font-bold text-purple-300 focus:outline-none focus:border-purple-400 font-mono">
-                            
-                            <button type="button" @click="dialCustomVoiceCall()" 
-                                    :disabled="calling"
-                                    class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500 text-white font-bold text-xs uppercase flex items-center space-x-1.5 shadow-lg disabled:opacity-50 transition-all">
-                                <i data-lucide="phone" class="w-4 h-4"></i>
-                                <span x-text="calling ? 'কল হচ্ছে...' : 'AI কল 📞'"></span>
+                                   class="flex-1 bg-transparent text-lg sm:text-xl font-bold font-mono text-white tracking-widest focus:outline-none">
+                            <button type="button" @click="dialPhone = dialPhone.slice(0, -1)" class="p-1.5 text-slate-400 hover:text-red-400 text-xs font-mono" title="মুছে ফেলুন">
+                                ⌫
                             </button>
-
-                            <button type="button" @click="
-                                navigator.clipboard.writeText(dialPhone);
-                                alert('📞 ফোন নম্বর (' + dialPhone + ') কপি করা হয়েছে!\nআপনার Dial App বা ফোনে পেস্ট করে কল করুন।');
-                                window.location.href = 'tel:' + dialPhone;
-                            " class="p-2.5 rounded-xl bg-purple-600/30 text-purple-300 border border-purple-500/40 hover:bg-purple-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center" title="Dial App বা ফোনে সরাসরি কল">
-                                <i data-lucide="external-link" class="w-4 h-4"></i>
-                            </button>
-
-                            <a :href="'https://api.whatsapp.com/send?phone=88' + dialPhone.replace(/^88/, '').replace(/^0+/, '')" target="_blank"
-                               class="p-2.5 rounded-xl bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center" title="WhatsApp এ চ্যাট ও অডিও কল খুলুন">
-                                <i data-lucide="message-circle" class="w-4 h-4"></i>
-                            </a>
                         </div>
-                        <p class="text-[10px] text-slate-500">কলার আইডি: <b class="text-purple-300 font-mono">{{ $bdIpNumber ?: '+8809678831374' }} (Dial / BD IP TSP)</b></p>
                     </div>
 
-                    <!-- Idle Screen -->
-                    <div x-show="!callActive && !voiceResult" class="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 text-center space-y-2">
-                        <div class="w-10 h-10 mx-auto rounded-full bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400">
-                            <i data-lucide="phone-call" class="w-5 h-5"></i>
-                        </div>
-                        <p class="text-xs text-slate-300 font-bold">ফোন নম্বর দিয়ে "AI কল" বাটনে চাপুন</p>
-                        <p class="text-[11px] text-slate-500">স্পিকারে স্বয়ংক্রিয় স্পষ্ট বাংলায় ভয়েস কল শোনা যাবে</p>
+                    <!-- Softphone Keypad (3x4 Grid) -->
+                    <div class="grid grid-cols-3 gap-2 py-1">
+                        @foreach(['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'] as $key)
+                            <button type="button" @click="dialPhone += '{{ $key }}'" 
+                                    class="py-2.5 rounded-xl bg-slate-900 hover:bg-purple-950/60 border border-slate-800 hover:border-purple-500/40 text-slate-200 hover:text-white font-mono font-bold text-sm transition-all shadow-sm active:scale-95">
+                                {{ $key }}
+                            </button>
+                        @endforeach
                     </div>
 
-                    <!-- Active Connected Screen -->
-                    <div x-show="callActive" x-cloak class="p-4 rounded-2xl bg-purple-950/60 border border-purple-400/50 space-y-3 animate-pulse">
+                    <!-- Action Call Buttons (Tri-Action Bar) -->
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <button type="button" @click="dialCustomVoiceCall()" 
+                                :disabled="calling"
+                                class="py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-400 hover:to-pink-500 text-white font-bold text-xs uppercase flex items-center justify-center space-x-1.5 shadow-lg disabled:opacity-50 transition-all">
+                            <i data-lucide="phone" class="w-4 h-4"></i>
+                            <span x-text="calling ? 'কল...' : 'AI কল 📞'"></span>
+                        </button>
+
+                        <button type="button" @click="
+                            navigator.clipboard.writeText(dialPhone);
+                            alert('📞 ফোন নম্বর (' + dialPhone + ') কপি করা হয়েছে!\nআপনার Dial App বা ফোনে পেস্ট করে কল করুন।');
+                            window.location.href = 'tel:' + dialPhone;
+                        " class="py-3 rounded-xl bg-slate-900 border border-purple-500/40 text-purple-300 hover:bg-purple-600 hover:text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-all" title="Dial App এ সরাসরি ডায়াল">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            <span>Dial App</span>
+                        </button>
+
+                        <a :href="'https://api.whatsapp.com/send?phone=88' + dialPhone.replace(/^88/, '').replace(/^0+/, '')" target="_blank"
+                           class="py-3 rounded-xl bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-600 hover:text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-all text-center">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i>
+                            <span>WhatsApp</span>
+                        </a>
+                    </div>
+
+                    <!-- Active Connected Screen & Waveform -->
+                    <div x-show="callActive" x-cloak class="p-4 rounded-2xl bg-purple-950/80 border border-purple-400/60 space-y-3">
                         <div class="flex items-center justify-between text-purple-200">
                             <span class="font-bold flex items-center gap-2 text-xs">
                                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                                <span>📞 লাইভ কল চলমান: <b x-text="dialPhone" class="font-mono"></b></span>
+                                <span>📞 কল চলমান: <b x-text="dialPhone" class="font-mono text-white"></b></span>
                             </span>
-                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold font-mono">CONNECTED</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold font-mono">00:18 CONNECTED</span>
+                        </div>
+
+                        <!-- Live Waveform Animation -->
+                        <div class="flex items-center justify-center space-x-1 py-2">
+                            <span class="w-1 h-3 bg-purple-400 rounded-full animate-bounce"></span>
+                            <span class="w-1 h-6 bg-pink-400 rounded-full animate-bounce [animation-delay:0.1s]"></span>
+                            <span class="w-1 h-8 bg-purple-300 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                            <span class="w-1 h-10 bg-emerald-400 rounded-full animate-bounce [animation-delay:0.3s]"></span>
+                            <span class="w-1 h-6 bg-cyan-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                            <span class="w-1 h-3 bg-purple-400 rounded-full animate-bounce [animation-delay:0.5s]"></span>
                         </div>
                         
-                        <div class="p-3 rounded-xl bg-slate-950/80 border border-purple-800/60 text-xs text-slate-200 leading-relaxed italic" x-text="currentVoiceScript"></div>
+                        <div class="p-3 rounded-xl bg-slate-950/90 border border-purple-800/60 text-xs text-slate-200 leading-relaxed italic" x-text="currentVoiceScript"></div>
                         
                         <div class="pt-2 flex items-center gap-2">
                             <button type="button" @click="confirmVoiceResponse('হ্যাঁ আমি অর্ডারটি কনফার্ম করছি')" 
-                                    class="flex-1 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-lg flex items-center justify-center space-x-1.5">
+                                    class="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shadow-lg flex items-center justify-center space-x-1.5">
                                 <span>🗣️ বলুন: "হ্যাঁ নিব" (কনফার্ম)</span>
                             </button>
                             <button type="button" @click="confirmVoiceResponse('না বাতিল করুন')" 
-                                    class="px-4 py-2 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs transition-all flex items-center justify-center space-x-1">
+                                    class="px-4 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs transition-all flex items-center justify-center space-x-1">
                                 <span>❌ "বাতিল"</span>
                             </button>
                         </div>
