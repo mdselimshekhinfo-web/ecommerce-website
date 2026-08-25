@@ -140,6 +140,50 @@
                 </a>
             </div>
 
+            <!-- 1-Click Multi-App Calling & IP TSP Hub -->
+            <div class="admin-glass rounded-3xl p-6 border border-purple-500/30 space-y-4" x-data="{
+                speaking: false,
+                script: '{{ addslashes(\App\Services\VoiceCallingService::generateVoiceScript($order)['voice_script']) }}',
+                speakScript() {
+                    if ('speechSynthesis' in window) {
+                        this.speaking = true;
+                        const u = new SpeechSynthesisUtterance(this.script);
+                        u.lang = 'bn-BD';
+                        u.onend = () => this.speaking = false;
+                        window.speechSynthesis.speak(u);
+                    }
+                }
+            }">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-cyber font-bold text-xs text-white uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="phone-call" class="w-4 h-4 text-purple-400"></i>
+                        <span>IP অ্যাপ ও এআই ভয়েস কল হাব</span>
+                    </h3>
+                    <span class="text-[10px] font-mono text-purple-300 font-bold">Caller: {{ \App\Models\ThemeSetting::get('bd_ip_number', '+8809678831374') }}</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="tel:{{ $order->customer_phone }}" 
+                       class="py-2.5 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-[11px] flex items-center justify-center space-x-1.5 transition-all text-center" title="Dial App বা ফোনে সরাসরি কল">
+                        <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+                        <span>Dial App এ কল 📞</span>
+                    </a>
+
+                    <a href="https://wa.me/88{{ preg_replace('/[^0-9]/', '', $order->customer_phone) }}" target="_blank"
+                       class="py-2.5 px-3 rounded-xl bg-emerald-600/30 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/40 font-bold text-[11px] flex items-center justify-center space-x-1.5 transition-all text-center">
+                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                        <span>WhatsApp কল</span>
+                    </a>
+                </div>
+
+                <!-- AI Speech Prompt Player -->
+                <button type="button" @click="speakScript()"
+                        class="w-full py-2 rounded-xl bg-slate-900 border border-slate-700 hover:border-purple-400 text-slate-200 hover:text-purple-300 text-[11px] font-mono flex items-center justify-center space-x-2 transition-all">
+                    <i data-lucide="volume-2" class="w-3.5 h-3.5 text-purple-400"></i>
+                    <span x-text="speaking ? 'এআই ভয়েস পড়ছে...' : '🔊 এআই বাংলা ভয়েস স্ক্রিপ্ট শুনুন'"></span>
+                </button>
+            </div>
+
             <!-- Status Control Form -->
             <div class="admin-glass rounded-3xl p-6 border border-slate-800 space-y-4">
                 <h3 class="font-cyber font-bold text-sm text-white uppercase tracking-wider">
